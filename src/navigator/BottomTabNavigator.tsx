@@ -9,6 +9,7 @@ import ChatsScreen from "../screens/ChatsScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 //@ts-ignore
 import Ionicons from "react-native-vector-icons/Ionicons";
+import ChatsScreenHeader from "../components/ChatsScreenComponents/ChatsScreenHeader";
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorType>();
 
@@ -18,6 +19,7 @@ const BottomTabNavigator = () => {
       initialRouteName="Chats"
       screenOptions={({ route }) => ({
         tabBarShowLabel: false,
+
         tabBarStyle: {
           position: "absolute",
           backgroundColor: "whitesmoke",
@@ -64,7 +66,11 @@ const BottomTabNavigator = () => {
       <Tab.Screen name="Status" component={StatusScreen} />
       <Tab.Screen name="Calls" component={CallsScreen} />
       <Tab.Screen name="Camera" component={CameraScreen} />
-      <Tab.Screen name="Chats" component={ChatsScreen} />
+      <Tab.Screen
+        name="Chats"
+        component={ChatsScreen}
+        options={{ header: () => <ChatsScreenHeader /> }}
+      />
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
   );

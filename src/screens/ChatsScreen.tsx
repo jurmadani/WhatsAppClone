@@ -1,9 +1,10 @@
 import { View, Text } from "react-native";
 import React from "react";
+import { chatScreenStyles } from "../styles/ChatsScreenStyles/styles";
 
 const ChatsScreen = () => {
   return (
-    <View>
+    <View style={chatScreenStyles.screenContainer}>
       <Text>ChatsScreen</Text>
     </View>
   );
