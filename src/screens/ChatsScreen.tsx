@@ -1,13 +1,25 @@
-import { View, Text } from "react-native";
+import { View, Text, FlatList, StyleSheet } from "react-native";
 import React from "react";
-import { chatScreenStyles } from "../styles/ChatsScreenStyles/styles";
+import { chats } from "../../dummy-test-data/chats";
+import ChatListItem from "../components/ChatsScreenComponents/ChatListItem";
 
 const ChatsScreen = () => {
   return (
-    <View style={chatScreenStyles.screenContainer}>
-      <Text>ChatsScreen</Text>
+    <View style={styles.screenContainer}>
+      <FlatList
+        data={chats}
+        showsVerticalScrollIndicator={false}
+        renderItem={(item) => <ChatListItem item={item.item} />}
+      />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  screenContainer: {
+    backgroundColor: "white",
+    flex: 1,
+  },
+});
 
 export default ChatsScreen;
