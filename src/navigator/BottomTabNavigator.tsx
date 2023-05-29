@@ -1,4 +1,4 @@
-import { View, Text, Settings } from "react-native";
+import { View, Text, Settings, Button } from "react-native";
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BottomTabNavigatorType } from "../types/navigation/BottomTabNavigatorTypes";
@@ -9,7 +9,10 @@ import ChatsScreen from "../screens/ChatsScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 //@ts-ignore
 import Ionicons from "react-native-vector-icons/Ionicons";
-import ChatsScreenHeader from "../components/ChatsScreenComponents/ChatsScreenHeader";
+import ChatsScreenHeader, {
+  EditButton,
+  NewConversationIcon,
+} from "../components/ChatsScreenComponents/ChatsScreenHeader";
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorType>();
 
@@ -69,7 +72,16 @@ const BottomTabNavigator = () => {
       <Tab.Screen
         name="Chats"
         component={ChatsScreen}
-        options={{ header: () => <ChatsScreenHeader /> }}
+        options={{
+          headerLeft: () => <EditButton/>,
+          headerStyle: {
+            backgroundColor: "whitesmoke",
+          },
+          headerRight: () => <NewConversationIcon />,
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+        }}
       />
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>

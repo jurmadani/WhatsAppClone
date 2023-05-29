@@ -9,7 +9,13 @@ const ChatListItem = ({ item }: any) => {
     useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
 
   return (
-    <TouchableOpacity onPress={() => navigation.navigate("ChatScreen")}>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate("ChatScreen", {
+          item: item,
+        })
+      }
+    >
       <View style={styles.container}>
         {/* User avatar */}
         <Image source={{ uri: item.user.image }} style={styles.avatar} />

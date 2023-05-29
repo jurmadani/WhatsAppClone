@@ -1,14 +1,32 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  FlatList,
+} from "react-native";
+import React from "react";
+import { messages } from "../../dummy-test-data/messages";
+import Message from "../components/ChatScreenComponents/Message";
 
-const ChatScreen = () => {
+const ChatScreen = ({ route }: any) => {
   return (
-    <View>
-      <Text>ChatScreen</Text>
-    </View>
-  )
-}
+    <ImageBackground
+      source={require("../../assets/images/BG.png")}
+      style={styles.container}
+    >
+      <FlatList
+        data={messages}
+        renderItem={({ item }) => <Message item={item} />}
+      />
+    </ImageBackground>
+  );
+};
 
-export default ChatScreen
+export default ChatScreen;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

@@ -10,13 +10,13 @@ import React from "react";
 //@ts-ignore
 import Feather from "react-native-vector-icons/Feather";
 
-const NewConversationIcon = () => (
+export const NewConversationIcon = () => (
   <TouchableOpacity>
     <Feather name="edit" size={24} style={styles.newConversationIcon} />
   </TouchableOpacity>
 );
 
-const EditButton = () => (
+export const EditButton = () => (
   <TouchableOpacity>
     <Text style={styles.editButton}>Edit</Text>
   </TouchableOpacity>
@@ -51,10 +51,12 @@ const styles = StyleSheet.create({
   },
   newConversationIcon: {
     color: "#3396FD",
+    marginRight: 15,
   },
   editButton: {
     fontSize: 19,
     color: "#3396FD",
+    marginLeft:15,
   },
 });
 
