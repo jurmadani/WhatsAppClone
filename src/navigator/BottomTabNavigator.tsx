@@ -1,4 +1,4 @@
-import { View, Text, Settings, Button } from "react-native";
+import { View, Text, Settings, Button, TouchableOpacity } from "react-native";
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BottomTabNavigatorType } from "../types/navigation/BottomTabNavigatorTypes";
@@ -72,17 +72,40 @@ const BottomTabNavigator = () => {
       <Tab.Screen
         name="Chats"
         component={ChatsScreen}
-        options={{
-          headerLeft: () => <EditButton/>,
-          headerStyle: {
-            backgroundColor: "whitesmoke",
-          },
-          headerRight: () => <NewConversationIcon />,
-          headerTitleStyle: {
-            fontWeight: "bold",
-          },
+        options={({ navigation, route }) => {
+          const offsetY = route?.params?.offsetY || 0;
+          const showTitle = offsetY > 56;
+          return {
+            headerLeft: () => <EditButton />,
+            headerStyle: {
+              backgroundColor: showTitle ? "whitesmoke" : "white",
+            },
+            headerShadowVisible: showTitle ? true : false,
+            headerRight: () => (
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                {/* camera icon */}
+                <TouchableOpacity>
+                  <Ionicons
+                    //@ts-ignore
+                    name={"camera-outline"}
+                    size={29}
+                    color={"#3396FD"}
+                    style={{ marginRight: 25 }}
+                  />
+                </TouchableOpacity>
+
+                {/* new conv icon */}
+                <NewConversationIcon />
+              </View>
+            ),
+            headerTitle: showTitle ? "Chats" : "", // Conditionally show/hide the title
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
+          };
         }}
       />
+
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
   );

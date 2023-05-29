@@ -12,7 +12,7 @@ import Feather from "react-native-vector-icons/Feather";
 
 export const NewConversationIcon = () => (
   <TouchableOpacity>
-    <Feather name="edit" size={24} style={styles.newConversationIcon} />
+    <Feather name="edit" size={22} style={styles.newConversationIcon} />
   </TouchableOpacity>
 );
 
@@ -51,12 +51,12 @@ const styles = StyleSheet.create({
   },
   newConversationIcon: {
     color: "#3396FD",
-    marginRight: 15,
+    marginRight: 20,
   },
   editButton: {
     fontSize: 19,
     color: "#3396FD",
-    marginLeft:15,
+    marginLeft: 15,
   },
 });
 
