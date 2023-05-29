@@ -1,7 +1,7 @@
 export type BottomTabNavigatorType = {
     Status: any;
     Calls: any;
-    Camera: any;
+    Contacts: any;
     Chats: any;
     Settings: any
 }

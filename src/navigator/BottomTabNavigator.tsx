@@ -2,17 +2,14 @@ import { View, Text, Settings, Button, TouchableOpacity } from "react-native";
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BottomTabNavigatorType } from "../types/navigation/BottomTabNavigatorTypes";
-import StatusScreen from "../screens/StatusScreen";
-import CallsScreen from "../screens/CallsScreen";
-import CameraScreen from "../screens/CameraScreen";
 import ChatsScreen from "../screens/ChatsScreen";
-import SettingsScreen from "../screens/SettingsScreen";
 //@ts-ignore
 import Ionicons from "react-native-vector-icons/Ionicons";
 import ChatsScreenHeader, {
   EditButton,
   NewConversationIcon,
 } from "../components/ChatsScreenComponents/ChatsScreenHeader";
+import NotImplementedYetScreen from "../screens/NotImplementedYetScreen";
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorType>();
 
@@ -34,13 +31,13 @@ const BottomTabNavigator = () => {
           if (route.name === "Status") {
             iconName = "ios-sync-circle-outline";
           } else if (route.name === "Calls") {
-            iconName = "call-outline";
-          } else if (route.name === "Camera") {
-            iconName = "camera-outline";
+            iconName = "call";
+          } else if (route.name === "Contacts") {
+            iconName = "ios-people";
           } else if (route.name === "Chats") {
             iconName = "ios-chatbubbles-sharp";
           } else if (route.name === "Settings") {
-            iconName = "settings-outline";
+            iconName = "settings";
           }
 
           return (
@@ -66,9 +63,9 @@ const BottomTabNavigator = () => {
         },
       })}
     >
-      <Tab.Screen name="Status" component={StatusScreen} />
-      <Tab.Screen name="Calls" component={CallsScreen} />
-      <Tab.Screen name="Camera" component={CameraScreen} />
+      <Tab.Screen name="Status" component={NotImplementedYetScreen} />
+      <Tab.Screen name="Calls" component={NotImplementedYetScreen} />
+      <Tab.Screen name="Contacts" component={NotImplementedYetScreen} />
       <Tab.Screen
         name="Chats"
         component={ChatsScreen}
@@ -106,7 +103,7 @@ const BottomTabNavigator = () => {
         }}
       />
 
-      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen name="Settings" component={NotImplementedYetScreen} />
     </Tab.Navigator>
   );
 };
