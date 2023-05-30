@@ -1,4 +1,5 @@
 export type StackNavigatorTypes = {
+  Onboarding: any;
   Login: any;
   Signup: any;
   BottomTabNav: any;

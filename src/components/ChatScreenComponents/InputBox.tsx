@@ -7,7 +7,7 @@ const InputBox = () => {
   return (
     <View style={styles.container}>
       {/* Icon */}
-      <AntDesign name="plus" size={27} color={"royalblue"} />
+      <AntDesign name="plus" size={27} color={"#007AFF"} />
       {/* Text input */}
       <TextInput placeholder="type your message..." style={styles.input} />
       {/* Icon */}
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   send: {
-    backgroundColor: "royalblue",
+    backgroundColor: "#007AFF",
     padding: 7,
     borderRadius: 17,
     overflow: "hidden",

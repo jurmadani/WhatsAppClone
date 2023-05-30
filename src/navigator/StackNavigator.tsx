@@ -9,6 +9,7 @@ import ContactsModal from "../screens/NewConversationModal";
 import NewConversationModal from "../screens/NewConversationModal";
 import { windowHeight } from "../constants/Dimensions";
 import { SearchBar } from "@rneui/base";
+import OnboardingScreen from "../screens/OnboardingScreen";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -20,6 +21,11 @@ const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 const StackNavigator = () => {
   return (
     <Stack.Navigator>
+      <Stack.Screen
+        name="Onboarding"
+        component={OnboardingScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen
         name="BottomTabNav"
         component={BottomTabNavigator}
