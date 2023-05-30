@@ -13,14 +13,14 @@ const Message = ({ item }: any) => {
       style={[
         styles.container,
         {
-          backgroundColor: isMyMessage() ? "#DCF8C5" : "white",
+          backgroundColor: isMyMessage() ? "#DCF7C5" : "white",
           alignSelf: isMyMessage() ? "flex-end" : "flex-start",
         },
       ]}
     >
       {/* Messages */}
       <Text style={styles.message}>{item.text}</Text>
-      <Text style={styles.time}>{dayjs(item.createdAt).fromNow(true)}</Text>
+      <Text style={styles.time}>{dayjs(item.createdAt).format("HH:MM")}</Text>
     </View>
   );
 };
@@ -35,10 +35,11 @@ const styles = StyleSheet.create({
     maxWidth: "80%",
   },
   message: {
-    margin: 10,
+    margin: 2,
   },
   time: {
     alignSelf: "flex-end",
-    color: "grey",
+    opacity: 0.3,
+    fontSize:13,
   },
 });

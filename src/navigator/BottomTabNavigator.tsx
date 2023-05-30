@@ -5,15 +5,19 @@ import { BottomTabNavigatorType } from "../types/navigation/BottomTabNavigatorTy
 import ChatsScreen from "../screens/ChatsScreen";
 //@ts-ignore
 import Ionicons from "react-native-vector-icons/Ionicons";
-import ChatsScreenHeader, {
-  EditButton,
-  NewConversationIcon,
-} from "../components/ChatsScreenComponents/ChatsScreenHeader";
 import NotImplementedYetScreen from "../screens/NotImplementedYetScreen";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
+import NewConversationIcon from "../components/ChatsScreenComponents/NewConversationIcon";
+import EditButton from "../components/ChatsScreenComponents/EditButton";
+import CameraIcon from "../components/ChatsScreenComponents/CameraIcon";
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorType>();
 
 const BottomTabNavigator = () => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
   return (
     <Tab.Navigator
       initialRouteName="Chats"
@@ -79,17 +83,7 @@ const BottomTabNavigator = () => {
             headerShadowVisible: showTitle ? true : false,
             headerRight: () => (
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                {/* camera icon */}
-                <TouchableOpacity>
-                  <Ionicons
-                    //@ts-ignore
-                    name={"camera-outline"}
-                    size={29}
-                    color={"#3396FD"}
-                    style={{ marginRight: 25 }}
-                  />
-                </TouchableOpacity>
-
+                <CameraIcon />
                 {/* new conv icon */}
                 <NewConversationIcon />
               </View>

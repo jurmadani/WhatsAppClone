@@ -59,12 +59,15 @@ const ChatsScreen = ({ navigation }: any) => {
           {/* New chat */}
           <Button title="New group" color={"#3396FD"} />
         </View>
-        <Divider/>
+        <Divider />
         <FlatList
           data={chats}
           showsVerticalScrollIndicator={false}
           renderItem={(item) => <ChatListItem item={item.item} />}
           scrollEnabled={false}
+          contentContainerStyle={{
+            paddingBottom: 95,
+          }}
         />
       </View>
     </ScrollView>
