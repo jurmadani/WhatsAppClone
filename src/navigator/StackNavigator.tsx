@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Button } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
 import BottomTabNavigator from "./BottomTabNavigator";
@@ -10,6 +10,7 @@ import NewConversationModal from "../screens/NewConversationModal";
 import { windowHeight } from "../constants/Dimensions";
 import { SearchBar } from "@rneui/base";
 import OnboardingScreen from "../screens/OnboardingScreen";
+import SignupScreen from "../screens/SignupScreen";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -22,9 +23,15 @@ const StackNavigator = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Onboarding"
-        component={OnboardingScreen}
-        options={{ headerShown: false }}
+        name="Signup"
+        component={SignupScreen}
+        options={{
+          headerTitle: "Phone Number",
+          headerStyle: {
+            backgroundColor: "whitesmoke",
+          },
+          headerRight: () => <Button title="Done" />,
+        }}
       />
       <Stack.Screen
         name="BottomTabNav"
