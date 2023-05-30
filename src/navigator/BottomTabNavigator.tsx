@@ -1,4 +1,4 @@
-import { View, Text, Settings, Button, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Animated } from "react-native";
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BottomTabNavigatorType } from "../types/navigation/BottomTabNavigatorTypes";
@@ -69,7 +69,7 @@ const BottomTabNavigator = () => {
       <Tab.Screen
         name="Chats"
         component={ChatsScreen}
-        options={({ navigation, route }) => {
+        options={({ route }) => {
           const offsetY = route?.params?.offsetY || 0;
           const showTitle = offsetY > 56;
           return {

@@ -3,11 +3,13 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../../types/navigation/StackNavigatorTypes";
+import { Divider } from "@ui-kitten/components";
+import { windowWidth } from "../../constants/Dimensions";
+import dayjs from "dayjs";
 
 const ChatListItem = ({ item }: any) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
-
   return (
     <TouchableOpacity
       onPress={() =>
@@ -27,7 +29,9 @@ const ChatListItem = ({ item }: any) => {
         </View>
 
         {/* Timestamp */}
+        <Text style={styles.timestamp}>{dayjs(item.lastMessage.createdAt).format("DD.MM.YYYY")}</Text>
       </View>
+      <Divider style={styles.divider} />
     </TouchableOpacity>
   );
 };
@@ -45,14 +49,25 @@ const styles = StyleSheet.create({
   },
   username: {
     fontWeight: "bold",
+    fontSize: 16,
   },
   userInfo: {
-    paddingLeft: 10,
+    paddingLeft: 15,
     paddingTop: 5,
   },
   lastMessage: {
     opacity: 0.4,
+    width: windowWidth - 130,
+    paddingTop:3,
   },
+  divider: {
+    marginLeft: 80,
+  },
+  timestamp:{
+    right:38,
+    opacity:0.4,
+    fontSize:15,
+  }
 });
 
 export default ChatListItem;
