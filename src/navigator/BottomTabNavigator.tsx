@@ -19,7 +19,6 @@ const BottomTabNavigator = () => {
       initialRouteName="Chats"
       screenOptions={({ route }) => ({
         tabBarShowLabel: false,
-
         tabBarStyle: {
           position: "absolute",
           backgroundColor: "whitesmoke",
