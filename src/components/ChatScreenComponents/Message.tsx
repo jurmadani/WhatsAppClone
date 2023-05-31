@@ -33,13 +33,25 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     maxWidth: "80%",
+
+    // Shadows
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 1.0,
+
+    elevation: 1,
   },
   message: {
     margin: 2,
+    fontSize: 15,
   },
   time: {
     alignSelf: "flex-end",
     opacity: 0.3,
-    fontSize:13,
+    fontSize: 13,
   },
 });

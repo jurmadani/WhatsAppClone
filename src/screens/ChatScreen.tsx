@@ -17,7 +17,7 @@ const ChatScreen = ({ route }: any) => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={60}
-      style={{flex:1,}}
+      style={{flex:1,backgroundColor:'whitesmoke'}}
     >
       <ImageBackground
         source={require("../../assets/images/BG.png")}
@@ -40,7 +40,8 @@ export default ChatScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginBottom: 30,
+    marginBottom: 35,
+    backgroundColor:'whitesmoke'
   },
   list: {
     padding: 8,

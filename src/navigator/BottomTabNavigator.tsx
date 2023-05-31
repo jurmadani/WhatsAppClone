@@ -12,12 +12,11 @@ import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
 import NewConversationIcon from "../components/ChatsScreenComponents/NewConversationIcon";
 import EditButton from "../components/ChatsScreenComponents/EditButton";
 import CameraIcon from "../components/ChatsScreenComponents/CameraIcon";
+import SettingsScreen from "../screens/SettingsScreen";
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorType>();
 
 const BottomTabNavigator = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
   return (
     <Tab.Navigator
       initialRouteName="Chats"
@@ -96,7 +95,25 @@ const BottomTabNavigator = () => {
         }}
       />
 
-      <Tab.Screen name="Settings" component={NotImplementedYetScreen} />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={({ route }) => {
+          const offsetY = route?.params?.offsetY || 0;
+          const showTitle = offsetY > 56;
+          return {
+            headerStyle: {
+              backgroundColor: showTitle ? "white" : "whitesmoke",
+            },
+            headerShadowVisible: showTitle ? true : false,
+
+            headerTitle: showTitle ? "Settings" : "", // Conditionally show/hide the title
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
+          };
+        }}
+      />
     </Tab.Navigator>
   );
 };
