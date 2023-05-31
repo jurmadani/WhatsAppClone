@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   Button,
+  Platform,
 } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import { chats } from "../../dummy-test-data/chats";
@@ -42,7 +43,12 @@ const ChatsScreen = ({ navigation }: any) => {
           <SearchBar
             //@ts-ignore
             platform={Platform.OS === "ios" ? "ios" : "android"}
-            inputContainerStyle={styles.inputContainerStyle}
+            inputContainerStyle={[
+              styles.inputContainerStyle,
+              {
+                height: Platform.OS === "ios" ? 10 : 40,
+              },
+            ]}
             containerStyle={styles.containerStyle}
             placeholder={"Search"}
             showCancel={false}
@@ -53,7 +59,12 @@ const ChatsScreen = ({ navigation }: any) => {
           </View>
         </View>
 
-        <View style={styles.buttonsView}>
+        <View
+          style={[
+            styles.buttonsView,
+            { padding: Platform.OS === "ios" ? 0 : 15 },
+          ]}
+        >
           {/* My contacts */}
           <Button title="My contacts" color={"#3396FD"} />
           {/* New chat */}
@@ -100,7 +111,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   inputContainerStyle: {
-    height: 10,
     backgroundColor: "whitesmoke",
   },
   containerStyle: {

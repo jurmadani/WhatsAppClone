@@ -172,6 +172,7 @@ const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 const StackNavigator = () => {
   return (
     <Stack.Navigator>
+
       <Stack.Screen
         name="BottomTabNav"
         component={BottomTabNavigator}

@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, ScrollView, FlatList } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  FlatList,
+  Platform,
+} from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { SearchBar } from "@rneui/base";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -39,7 +46,10 @@ const SettingsScreen = ({ navigation }: any) => {
         <SearchBar
           //@ts-ignore
           platform={Platform.OS === "ios" ? "ios" : "android"}
-          inputContainerStyle={styles.inputContainerStyle}
+          inputContainerStyle={[
+            styles.inputContainerStyle,
+            { height: Platform.OS === "ios" ? 10 : 40 },
+          ]}
           containerStyle={styles.containerStyle}
           placeholder={"Search"}
           showCancel={false}
@@ -108,7 +118,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   inputContainerStyle: {
-    height: 10,
     backgroundColor: "#E4E4E4",
   },
   containerStyle: {
@@ -127,8 +136,8 @@ const styles = StyleSheet.create({
   list2: {
     marginTop: 35,
   },
-  list3:{
-    marginTop:35,
-    marginBottom:100,
-  }
+  list3: {
+    marginTop: 35,
+    marginBottom: 100,
+  },
 });

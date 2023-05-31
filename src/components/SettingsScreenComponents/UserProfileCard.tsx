@@ -68,7 +68,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#E4E4E4",
     marginLeft: 85,
   },
-  list:{
-    marginTop:20,
-  }
+
 });
