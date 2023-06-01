@@ -9,8 +9,13 @@ import {
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { windowHeight, windowWidth } from "../constants/Dimensions";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
 
 const OnboardingScreen = () => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
   return (
     <SafeAreaView style={styles.container}>
       {/* Image */}
@@ -27,7 +32,7 @@ const OnboardingScreen = () => {
         <Text style={styles.link}>Terms of Service</Text>
       </Text>
       {/* Button */}
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
         <Text style={styles.buttonText}>Agree & Continue</Text>
       </TouchableOpacity>
       {/* Footer logo */}

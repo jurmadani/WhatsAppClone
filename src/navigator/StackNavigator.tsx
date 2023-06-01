@@ -172,7 +172,22 @@ const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 const StackNavigator = () => {
   return (
     <Stack.Navigator>
-
+      <Stack.Screen
+        name="Onboarding"
+        component={OnboardingScreen}
+        options={{ headerShown: false, gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name="Signup"
+        component={SignupScreen}
+        options={{
+          headerTitle: "Phone Number",
+          headerStyle: {
+            backgroundColor: "whitesmoke",
+          },
+          headerRight: () => <Button title="Done" />,
+        }}
+      />
       <Stack.Screen
         name="BottomTabNav"
         component={BottomTabNavigator}
