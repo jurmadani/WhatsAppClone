@@ -15,7 +15,7 @@ import { Divider } from "@ui-kitten/components";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { firebase } from "../../backend/firebase";
 
-const SignupScreen = ({ route, navigation }: any) => {
+const SignupScreen = ({ navigation }: any) => {
   const [show, setShow] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("+32");

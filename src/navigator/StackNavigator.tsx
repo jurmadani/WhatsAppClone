@@ -1,5 +1,8 @@
 import { View, Text, TouchableOpacity, Button } from "react-native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  NativeStackNavigationProp,
+  createNativeStackNavigator,
+} from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
 import BottomTabNavigator from "./BottomTabNavigator";
 import ChatScreen from "../screens/ChatScreen";
@@ -13,6 +16,8 @@ import OnboardingScreen from "../screens/OnboardingScreen";
 import SignupScreen from "../screens/SignupScreen";
 import { firebase } from "../../backend/firebase";
 import { handleSignInWithPhoneNumber } from "../controllers/handleSignInWithPhoneNumber";
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -172,6 +177,9 @@ const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 */
 
 const StackNavigator = () => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
+  const dispatch = useDispatch();
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -194,8 +202,11 @@ const StackNavigator = () => {
                 onPress={async () => {
                   await handleSignInWithPhoneNumber(
                     route.params?.phoneNumber,
-                    route.params?.countryCode
-                  ).then(() => console.log("function fullfilled"));
+                    route.params?.countryCode,
+                    route.params?.countryName,
+                    navigation,
+                    dispatch
+                  );
                 }}
               />
             ),
@@ -205,7 +216,7 @@ const StackNavigator = () => {
       <Stack.Screen
         name="BottomTabNav"
         component={BottomTabNavigator}
-        options={{ headerShown: false }}
+        options={{ headerShown: false, gestureEnabled: false }}
       />
       <Stack.Screen
         name="ChatScreen"
