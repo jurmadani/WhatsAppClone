@@ -8,17 +8,26 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { windowWidth } from "../constants/Dimensions";
 import { CountryPicker } from "react-native-country-codes-picker";
 import { Divider } from "@ui-kitten/components";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import { firebase } from "../../backend/firebase";
 
-const SignupScreen = () => {
+const SignupScreen = ({ route, navigation }: any) => {
   const [show, setShow] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("+32");
   const [countryName, setCountryName] = useState("Belgium");
   const [countryFlag, setCountryFlag] = useState("🇧🇪");
+  useEffect(() => {
+    navigation.setParams({
+      phoneNumber: phoneNumber,
+      countryCode: countryCode,
+      countryName: countryName,
+    });
+  }, [phoneNumber, countryCode, countryName]);
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <SafeAreaView style={styles.container}>
@@ -50,6 +59,9 @@ const SignupScreen = () => {
             keyboardType="numeric"
             style={styles.phoneInput}
             placeholder="your phone number"
+            value={phoneNumber}
+            maxLength={15}
+            onChangeText={(number) => setPhoneNumber(number)}
           />
         </View>
 
@@ -139,7 +151,7 @@ const styles = StyleSheet.create({
   specialText: {
     color: "#3396FD",
   },
-  divider2:{
-    marginTop:20,
-  }
+  divider2: {
+    marginTop: 20,
+  },
 });

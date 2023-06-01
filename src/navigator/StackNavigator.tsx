@@ -11,6 +11,8 @@ import { windowHeight } from "../constants/Dimensions";
 import { SearchBar } from "@rneui/base";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import SignupScreen from "../screens/SignupScreen";
+import { firebase } from "../../backend/firebase";
+import { handleSignInWithPhoneNumber } from "../controllers/handleSignInWithPhoneNumber";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -180,12 +182,24 @@ const StackNavigator = () => {
       <Stack.Screen
         name="Signup"
         component={SignupScreen}
-        options={{
-          headerTitle: "Phone Number",
-          headerStyle: {
-            backgroundColor: "whitesmoke",
-          },
-          headerRight: () => <Button title="Done" />,
+        options={({ route }) => {
+          return {
+            headerTitle: "Phone Number",
+            headerStyle: {
+              backgroundColor: "whitesmoke",
+            },
+            headerRight: () => (
+              <Button
+                title="Done"
+                onPress={async () => {
+                  await handleSignInWithPhoneNumber(
+                    route.params?.phoneNumber,
+                    route.params?.countryCode
+                  ).then(() => console.log("function fullfilled"));
+                }}
+              />
+            ),
+          };
         }}
       />
       <Stack.Screen
