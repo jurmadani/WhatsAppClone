@@ -369,11 +369,11 @@ const StackNavigator = () => {
       <Stack.Screen
         name="ProfilePicture"
         component={ProfilePictureScreen}
-        options={{
-          headerRight: () => {
-            return <EditButton />;
-          },
-          headerTitle:"Profile picture"
+        options={({ route }) => {
+          return {
+            headerRight: () => <EditButton />,
+            headerTitle: "Profile picture",
+          };
         }}
       />
     </Stack.Navigator>

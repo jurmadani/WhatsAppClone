@@ -1,9 +1,29 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import React from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ActionSheetIOS,
+} from "react-native";
+import React, { useState } from "react";
+import { EditButtonType } from "../../types/ProfilePictureScreenTypes/EditButtonType";
 
 const EditButton = () => {
+  const onPress = () =>
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: ["Cancel", "Delete Picture", "Choose a photo", "Take a photo"],
+        destructiveButtonIndex: 1,
+        cancelButtonIndex: 0,
+      },
+      (buttonIndex) => {
+        if (buttonIndex === 0) {
+          // cancel action
+        }
+      }
+    );
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onPress}>
       <Text style={styles.text}>Edit</Text>
     </TouchableOpacity>
   );

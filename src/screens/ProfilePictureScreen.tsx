@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, Image } from "react-native";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { windowHeight, windowWidth } from "../constants/Dimensions";
 
-const ProfilePictureScreen = () => {
+const ProfilePictureScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       {/* Profile picture image */}
@@ -21,10 +21,10 @@ const styles = StyleSheet.create({
     width: windowWidth,
     height: windowHeight / 2,
   },
-  container:{
-    flex:1,
-    alignItems:'center',
-    justifyContent:'center',
-    backgroundColor:'whitesmoke'
-  }
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "whitesmoke",
+  },
 });
