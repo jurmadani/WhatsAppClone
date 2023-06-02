@@ -1,14 +1,33 @@
-import { StyleSheet, Text, View, Image } from "react-native";
-import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Animated,
+  Dimensions,
+} from "react-native";
+import React, { useState, useEffect, useRef, createRef } from "react";
 import { windowHeight, windowWidth } from "../constants/Dimensions";
+import { userSliceType } from "../types/redux/sliceTypes";
+import { useSelector } from "react-redux";
+import ImageCache from "../controllers/ImageCache";
+import AnimatedImageCache from "../controllers/AnimatedImageCache";
 
-const ProfilePictureScreen = ({ navigation }: any) => {
+const ProfilePictureScreen = () => {
+  //redux user global satte
+  const user: userSliceType = useSelector(
+    (state) =>
+      //@ts-ignore
+      state.user.user
+  );
   return (
     <View style={styles.container}>
       {/* Profile picture image */}
-      <Image
-        source={require("../../assets/images/capibara.jpg")}
-        style={styles.image}
+      <AnimatedImageCache
+        uri={user.imageURL}
+        height={windowHeight / 2}
+        width={windowWidth}
+        imageType="Animated user profile picture from profile picture screen"
       />
     </View>
   );

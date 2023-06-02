@@ -17,6 +17,7 @@ import {
   data2,
   data3,
 } from "../components/SettingsScreenComponents/ButtonData";
+import { useSelector } from "react-redux";
 
 const SettingsScreen = ({ navigation }: any) => {
   const scrollViewRef = useRef(null);

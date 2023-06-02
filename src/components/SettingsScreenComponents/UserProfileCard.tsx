@@ -15,17 +15,29 @@ import RenderItem from "./RenderItem";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../../types/navigation/StackNavigatorTypes";
+import { useSelector } from "react-redux";
+import ImageCache from "../../controllers/ImageCache";
+import { userSliceType } from "../../types/redux/sliceTypes";
 
 const UserProfileCard = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
+  //redux user global satte
+  const user: userSliceType = useSelector(
+    (state) =>
+      //@ts-ignore
+      state.user.user
+  );
   return (
     <TouchableOpacity onPress={() => navigation.navigate("EditProfile")}>
       <View style={styles.container}>
         {/* Avatar */}
-        <Avatar
-          source={require("../../../assets/images/capibara.jpg")}
-          style={{ height: 65, width: 65 }}
+        <ImageCache
+          uri={user?.imageURL}
+          borderRadius={99}
+          height={65}
+          width={65}
+          imageType="User profile picture from settings screen"
         />
         <View style={styles.usernameView}>
           {/* Username */}

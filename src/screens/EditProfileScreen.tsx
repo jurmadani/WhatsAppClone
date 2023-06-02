@@ -14,6 +14,9 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
+import ImageCache from "../controllers/ImageCache";
+import { userSliceType } from "../types/redux/sliceTypes";
+import { useSelector } from "react-redux";
 
 const EditProfileScreen = ({ navigation }: any) => {
   const stackNavigation =
@@ -29,7 +32,12 @@ const EditProfileScreen = ({ navigation }: any) => {
   useEffect(() => {
     navigation.setParams({ offsetY }); // Pass the offsetY value to route.params
   }, [offsetY]);
-
+  //redux user global satte
+  const user: userSliceType = useSelector(
+    (state) =>
+      //@ts-ignore
+      state.user.user
+  );
   return (
     <ScrollView
       style={styles.container}
@@ -41,9 +49,12 @@ const EditProfileScreen = ({ navigation }: any) => {
       <View style={styles.pictureContainer}>
         <View style={styles.pictureView}>
           {/* Avatar */}
-          <Avatar
-            source={require("../../assets/images/BG.png")}
-            style={styles.avatar}
+          <ImageCache
+            uri={user.imageURL}
+            height={65}
+            width={65}
+            borderRadius={99}
+            imageType="User profile picture from edit profile screen"
           />
           {/* Description */}
           <Text style={styles.description}>

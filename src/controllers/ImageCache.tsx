@@ -13,10 +13,6 @@ const ImageCache = ({
   margin,
   imageType,
 }: ImageCacheType) => {
-  const user = useSelector(
-    //@ts-expect-error
-    (state) => state.User.user
-  );
   const [source, setSource] = useState("");
   const ImgFunc = async (path: string) => {
     const image = await FileSystem.getInfoAsync(path);
@@ -38,15 +34,6 @@ const ImageCache = ({
       ImgFunc(path);
     }
   }, []);
-
-  useEffect(() => {
-    if (uri != undefined) {
-      var sh = require("shorthash");
-      const name = sh.unique(uri);
-      const path = `${FileSystem.cacheDirectory}${name}`;
-      ImgFunc(path);
-    }
-  }, [user.profilePictureURL]);
   return (
     <View>
       <Image
