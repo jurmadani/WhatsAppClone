@@ -12,10 +12,15 @@ import { windowWidth } from "../../constants/Dimensions";
 import { List } from "@ui-kitten/components";
 import { data1, data2 } from "./ButtonData";
 import RenderItem from "./RenderItem";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackNavigatorTypes } from "../../types/navigation/StackNavigatorTypes";
 
 const UserProfileCard = () => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={() => navigation.navigate("EditProfile")}>
       <View style={styles.container}>
         {/* Avatar */}
         <Avatar
@@ -68,5 +73,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#E4E4E4",
     marginLeft: 85,
   },
-
 });

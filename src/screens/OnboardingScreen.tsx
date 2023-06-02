@@ -12,10 +12,16 @@ import { windowHeight, windowWidth } from "../constants/Dimensions";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
+import { useSelector } from "react-redux";
 
 const OnboardingScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
+  const user = useSelector(
+    (state) =>
+      //@ts-ignore
+      state.user.user
+  );
   return (
     <SafeAreaView style={styles.container}>
       {/* Image */}
@@ -32,7 +38,12 @@ const OnboardingScreen = () => {
         <Text style={styles.link}>Terms of Service</Text>
       </Text>
       {/* Button */}
-      <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
+      <TouchableOpacity
+        onPress={() => {
+          if (user === null) navigation.navigate("Signup");
+          else navigation.navigate("BottomTabNav");
+        }}
+      >
         <Text style={styles.buttonText}>Agree & Continue</Text>
       </TouchableOpacity>
       {/* Footer logo */}

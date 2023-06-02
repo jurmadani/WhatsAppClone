@@ -1,0 +1,6 @@
+TODOS
+
+1)Finish edit profile screen with profile picture screen 
+2)Add contacts
+3)Create a new chat room
+4)Design the rest of tables schemas

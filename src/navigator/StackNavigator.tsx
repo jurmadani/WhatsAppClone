@@ -18,6 +18,7 @@ import { firebase } from "../../backend/firebase";
 import { handleSignInWithPhoneNumber } from "../controllers/handleSignInWithPhoneNumber";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
+import EditProfileScreen from "../screens/EditProfileScreen";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -341,6 +342,25 @@ const StackNavigator = () => {
                 <Divider />
               </View>
             ),
+          };
+        }}
+      />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={({ route }) => {
+          const offsetY = route?.params?.offsetY || 0;
+          const offsetPassedLimit = offsetY > 15;
+          return {
+            headerStyle: {
+              backgroundColor: offsetPassedLimit ? "whitesmoke" : "white",
+            },
+            headerShadowVisible: offsetPassedLimit ? true : false,
+
+            headerTitle: "Edit profile",
+            headerTitleStyle: {
+              fontWeight: "600",
+            },
           };
         }}
       />
