@@ -117,7 +117,7 @@ const EditProfileScreen = ({ navigation }: any) => {
       {/* Info View title */}
       <Text style={styles.infoContainerTitle}>INFO</Text>
       {/* Info view */}
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => stackNavigation.navigate("ChooseInfo")}>
         <View style={styles.infoContainer}>
           <Divider />
           {/* Info */}

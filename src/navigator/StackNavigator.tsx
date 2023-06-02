@@ -23,6 +23,7 @@ import ProfilePictureScreen from "../screens/ProfilePictureScreen";
 import EditButton from "../components/ProfilePictureScreenComponents/EditButton";
 import OkButton from "../components/EditProfileScreenComponents/OkButton";
 import CloseKeyboardButton from "../components/EditProfileScreenComponents/CloseKeyboardButton";
+import ChooseInfoScreen from "../screens/ChooseInfoScreen";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -382,6 +383,21 @@ const StackNavigator = () => {
           return {
             headerRight: () => <EditButton />,
             headerTitle: "Profile picture",
+          };
+        }}
+      />
+      <Stack.Screen
+        name="ChooseInfo"
+        component={ChooseInfoScreen}
+        options={({ route }) => {
+          const offsetY = route?.params?.offsetY || 0;
+          const offsetPassedLimit = offsetY > 1;
+          return {
+            headerTitle: "Info",
+            headerStyle: {
+              backgroundColor: offsetPassedLimit ? "white" : "whitesmoke",
+            },
+            headerShadowVisible: offsetPassedLimit ? true : false,
           };
         }}
       />

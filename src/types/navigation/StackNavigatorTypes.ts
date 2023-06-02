@@ -7,4 +7,5 @@ export type StackNavigatorTypes = {
   NewConversationModal: any
   EditProfile: any
   ProfilePicture: any;
+  ChooseInfo: any;
 };
