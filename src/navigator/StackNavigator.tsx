@@ -19,6 +19,8 @@ import { handleSignInWithPhoneNumber } from "../controllers/handleSignInWithPhon
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import EditProfileScreen from "../screens/EditProfileScreen";
+import ProfilePictureScreen from "../screens/ProfilePictureScreen";
+import EditButton from "../components/ProfilePictureScreenComponents/EditButton";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -362,6 +364,16 @@ const StackNavigator = () => {
               fontWeight: "600",
             },
           };
+        }}
+      />
+      <Stack.Screen
+        name="ProfilePicture"
+        component={ProfilePictureScreen}
+        options={{
+          headerRight: () => {
+            return <EditButton />;
+          },
+          headerTitle:"Profile picture"
         }}
       />
     </Stack.Navigator>

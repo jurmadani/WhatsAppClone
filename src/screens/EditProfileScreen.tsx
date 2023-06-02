@@ -11,8 +11,13 @@ import { windowWidth } from "../constants/Dimensions";
 import { Avatar } from "@ui-kitten/components";
 import { Divider } from "react-native-paper";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
 
 const EditProfileScreen = ({ navigation }: any) => {
+  const stackNavigation =
+    useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
   const scrollViewRef = useRef(null);
   const [offsetY, setOffsetY] = useState(0);
 
@@ -35,20 +40,20 @@ const EditProfileScreen = ({ navigation }: any) => {
       {/* User picture + Full name */}
       <View style={styles.pictureContainer}>
         <View style={styles.pictureView}>
-          <View style={{ alignItems: "center" }}>
-            {/* Avatar */}
-            <Avatar
-              source={require("../../assets/images/BG.png")}
-              style={styles.avatar}
-            />
-          </View>
+          {/* Avatar */}
+          <Avatar
+            source={require("../../assets/images/BG.png")}
+            style={styles.avatar}
+          />
           {/* Description */}
           <Text style={styles.description}>
             Enter your name and, optionally, add a profile picture
           </Text>
         </View>
         {/* Edit button */}
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => stackNavigation.navigate("ProfilePicture")}
+        >
           <Text style={styles.editButtonTitle}>Edit</Text>
         </TouchableOpacity>
         {/* Divider */}
