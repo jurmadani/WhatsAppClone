@@ -2,7 +2,7 @@ export interface initialStateUserSlice {
     user: userSliceType | null;
 }
 
-export type userSliceType =  {
+export type userSliceType = {
     uniqueId: string,
     phoneNumber: string,
     countryCode: string,
@@ -11,5 +11,6 @@ export type userSliceType =  {
     imageURL: string
     contacts: string[],
     fullName: string;
+    info: string
 
 }

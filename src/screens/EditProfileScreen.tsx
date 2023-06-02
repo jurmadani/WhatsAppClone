@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Keyboard,
 } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import { windowWidth } from "../constants/Dimensions";
@@ -19,11 +20,19 @@ import { userSliceType } from "../types/redux/sliceTypes";
 import { useSelector } from "react-redux";
 
 const EditProfileScreen = ({ navigation }: any) => {
+  //redux user global satte
+  const user: userSliceType = useSelector(
+    (state) =>
+      //@ts-ignore
+      state.user.user
+  );
   const stackNavigation =
     useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
   const scrollViewRef = useRef(null);
   const [offsetY, setOffsetY] = useState(0);
-
+  const [fullName, setFullName] = useState(user.fullName);
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+  const remainingCharacters = 25 - fullName.length;
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     setOffsetY(offsetY);
@@ -32,12 +41,7 @@ const EditProfileScreen = ({ navigation }: any) => {
   useEffect(() => {
     navigation.setParams({ offsetY }); // Pass the offsetY value to route.params
   }, [offsetY]);
-  //redux user global satte
-  const user: userSliceType = useSelector(
-    (state) =>
-      //@ts-ignore
-      state.user.user
-  );
+
   return (
     <ScrollView
       style={styles.container}
@@ -70,7 +74,29 @@ const EditProfileScreen = ({ navigation }: any) => {
         {/* Divider */}
         <Divider style={styles.divider1} />
         {/* Full name input */}
-        <TextInput placeholder="Full name" style={styles.fullNameInput} />
+        <View style={styles.fullNameInputContainer}>
+          <TextInput
+            placeholder={user.fullName}
+            style={styles.fullNameInput}
+            value={fullName}
+            maxLength={25}
+            onBlur={() => {
+              setIsKeyboardOpen(false);
+              navigation.setParams({ isKeyboardOpen: false });
+            }}
+            onFocus={() => {
+              setIsKeyboardOpen(true);
+              navigation.setParams({ isKeyboardOpen: true });
+            }}
+            onChangeText={(text) => setFullName(text)}
+          />
+          {isKeyboardOpen && (
+            <Text style={styles.remainingCharacters}>
+              {remainingCharacters}
+            </Text>
+          )}
+        </View>
+
         {/* Divider */}
         <Divider style={styles.divider2} />
       </View>
@@ -82,7 +108,9 @@ const EditProfileScreen = ({ navigation }: any) => {
       <View style={styles.phoneNumberContainer}>
         <Divider />
         {/* Phone number */}
-        <Text style={styles.phoneNumber}>+40 787 589 667</Text>
+        <Text style={styles.phoneNumber}>
+          {user.countryCode + " " + user.phoneNumber}
+        </Text>
         <Divider />
       </View>
 
@@ -94,7 +122,7 @@ const EditProfileScreen = ({ navigation }: any) => {
           <Divider />
           {/* Info */}
           <View style={styles.infoAndIconView}>
-            <Text style={styles.info}>Busy</Text>
+            <Text style={styles.info}>{user.info}</Text>
             <AntDesign
               name="right"
               size={18}
@@ -153,6 +181,7 @@ const styles = StyleSheet.create({
     height: 40,
     marginLeft: 20,
     fontSize: 17,
+    width: windowWidth / 1.15,
   },
   phoneNumberContainer: {
     backgroundColor: "white",
@@ -190,6 +219,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   icon: {
+    paddingRight: 15,
+  },
+  fullNameInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  remainingCharacters: {
+    fontSize: 16,
+    fontWeight: "500",
+    opacity: 0.3,
     paddingRight: 15,
   },
 });

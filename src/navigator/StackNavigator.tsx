@@ -21,6 +21,8 @@ import { useDispatch } from "react-redux";
 import EditProfileScreen from "../screens/EditProfileScreen";
 import ProfilePictureScreen from "../screens/ProfilePictureScreen";
 import EditButton from "../components/ProfilePictureScreenComponents/EditButton";
+import OkButton from "../components/EditProfileScreenComponents/OkButton";
+import CloseKeyboardButton from "../components/EditProfileScreenComponents/CloseKeyboardButton";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -362,6 +364,13 @@ const StackNavigator = () => {
             headerTitle: "Edit profile",
             headerTitleStyle: {
               fontWeight: "600",
+            },
+            headerRight: () => {
+              if (route?.params?.isKeyboardOpen === true) return <OkButton />;
+            },
+            headerLeft: () => {
+              if (route?.params?.isKeyboardOpen === true)
+                return <CloseKeyboardButton />;
             },
           };
         }}
