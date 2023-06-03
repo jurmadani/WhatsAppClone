@@ -4,10 +4,22 @@ import { ButtonInterface } from "../../types/NewConversationModalScreenTypes/But
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Divider } from "@ui-kitten/components";
 import { windowWidth } from "../../constants/Dimensions";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackNavigatorTypes } from "../../types/navigation/StackNavigatorTypes";
 
 const Button = ({ iconName, buttonName }: ButtonInterface) => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
+  const handleOnPress = () => {
+    if (buttonName === "New contact") {
+      navigation.navigate("AddNewContactModal");
+    } else if (buttonName === "New group") {
+      navigation.navigate("CreateNewGroupModal");
+    }
+  };
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={() => handleOnPress()}>
       <View style={styles.container}>
         <View style={styles.iconView}>
           <Ionicons name={iconName} size={23} color={"#3396FD"} />

@@ -24,6 +24,11 @@ import EditButton from "../components/ProfilePictureScreenComponents/EditButton"
 import OkButton from "../components/EditProfileScreenComponents/OkButton";
 import CloseKeyboardButton from "../components/EditProfileScreenComponents/CloseKeyboardButton";
 import ChooseInfoScreen from "../screens/ChooseInfoScreen";
+import AddNewContactModal from "../screens/AddNewContactModal";
+import SaveButton from "../components/AddNewContactModalComponents/SaveButton";
+import CancelButton from "../components/AddNewContactModalComponents/CancelButton";
+import CountriesModalHeader from "../components/CountriesModalComponents/CountriesModalHeader";
+import CountriesModal from "../screens/CountriesModal";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -367,7 +372,8 @@ const StackNavigator = () => {
               fontWeight: "600",
             },
             headerRight: () => {
-              if (route?.params?.isKeyboardOpen === true) return <OkButton fullName={route?.params?.fullName}/>;
+              if (route?.params?.isKeyboardOpen === true)
+                return <OkButton fullName={route?.params?.fullName} />;
             },
             headerLeft: () => {
               if (route?.params?.isKeyboardOpen === true)
@@ -381,9 +387,7 @@ const StackNavigator = () => {
         component={ProfilePictureScreen}
         options={({ route }) => {
           return {
-            headerRight: () => (
-              <EditButton />
-            ),
+            headerRight: () => <EditButton />,
             headerTitle: "Profile picture",
           };
         }}
@@ -400,6 +404,43 @@ const StackNavigator = () => {
               backgroundColor: offsetPassedLimit ? "white" : "whitesmoke",
             },
             headerShadowVisible: offsetPassedLimit ? true : false,
+          };
+        }}
+      />
+      <Stack.Screen
+        name="AddNewContactModal"
+        component={AddNewContactModal}
+        options={({ route }) => {
+          const offsetY = route?.params?.offsetY || 0;
+          const offsetPassedLimit = offsetY > 1;
+          return {
+            headerTitle: "New contact",
+            headerStyle: {
+              backgroundColor: offsetPassedLimit ? "white" : "whitesmoke",
+            },
+            headerShadowVisible: offsetPassedLimit ? true : false,
+            presentation: "modal",
+            headerRight: () => (
+              <SaveButton
+                contanctCanBeSaved={route?.params?.contanctCanBeSaved}
+              />
+            ),
+            headerLeft: () => <CancelButton />,
+          };
+        }}
+      />
+      <Stack.Screen
+        name="CountriesModal"
+        component={CountriesModal}
+        options={({ route }) => {
+          return {
+            header: () => (
+              <CountriesModalHeader
+                searchInput={route?.params?.searchInput}
+                setSearchInput={route?.params?.setSearchInput}
+              />
+            ),
+            presentation: "modal",
           };
         }}
       />
