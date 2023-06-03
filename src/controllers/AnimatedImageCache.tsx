@@ -8,6 +8,7 @@ import {
   PinchGestureHandler,
   State,
 } from "react-native-gesture-handler";
+import { userSliceType } from "../types/redux/sliceTypes";
 
 const AnimatedImageCache = ({
   uri,
@@ -22,7 +23,11 @@ const AnimatedImageCache = ({
   const scale = useRef(new Animated.Value(1)).current;
   const translateX = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(0)).current;
-
+  const user: userSliceType = useSelector(
+    (state) =>
+      //@ts-ignore
+      state.user.user
+  );
   const pinchRef = createRef();
   const panRef = createRef();
 
@@ -95,6 +100,15 @@ const AnimatedImageCache = ({
       ImgFunc(path);
     }
   }, []);
+
+  useEffect(() => {
+    if (uri != undefined) {
+      var sh = require("shorthash");
+      const name = sh.unique(uri);
+      const path = `${FileSystem.cacheDirectory}${name}`;
+      ImgFunc(path);
+    }
+  }, [user.imageURL]);
   return (
     <View>
       <PanGestureHandler

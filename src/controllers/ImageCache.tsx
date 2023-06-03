@@ -14,31 +14,38 @@ const ImageCache = ({
   imageType,
 }: ImageCacheType) => {
   const [source, setSource] = useState("");
-  const ImgFunc = async (path: string) => {
-    const image = await FileSystem.getInfoAsync(path);
-    if (image.exists) {
-      setSource(image.uri);
-      console.log(imageType + " read from cache");
-    } else {
-      const newImage = await FileSystem.downloadAsync(uri, path);
-      setSource(newImage.uri);
-      console.log(imageType + " file didn't existed downloaded to cache");
+  const user = useSelector(
+    (state) =>
+      //@ts-ignore
+      state.user.user
+  );
+
+  const cacheImage = async () => {
+    if (uri) {
+      const sh = require("shorthash");
+      const name = sh.unique(uri);
+      const path = `${FileSystem.cacheDirectory}${name}`;
+      const image = await FileSystem.getInfoAsync(path);
+      if (image.exists) {
+        setSource(image.uri);
+        console.log(imageType + " read from cache");
+      } else {
+        const newImage = await FileSystem.downloadAsync(uri, path);
+        setSource(newImage.uri);
+        console.log(imageType + " file didn't exist, downloaded to cache");
+      }
     }
   };
 
   useEffect(() => {
-    if (uri != undefined) {
-      var sh = require("shorthash");
-      const name = sh.unique(uri);
-      const path = `${FileSystem.cacheDirectory}${name}`;
-      ImgFunc(path);
-    }
-  }, []);
+    cacheImage();
+  }, [uri]);
+
   return (
     <View>
       <Image
         //@ts-ignore
-        source={{ uri: source === "" ? null : source }}
+        source={source ? { uri: source } : null}
         style={{
           height: height,
           width: width,

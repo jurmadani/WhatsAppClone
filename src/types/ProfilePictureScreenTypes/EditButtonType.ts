@@ -1,4 +1,3 @@
 export interface EditButtonType {
-    modalVisible: boolean;
-    setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
+    setImage: React.Dispatch<React.SetStateAction<string>>
 }

@@ -33,7 +33,7 @@ const UserProfileCard = () => {
       <View style={styles.container}>
         {/* Avatar */}
         <ImageCache
-          uri={user?.imageURL}
+          uri={user.imageURL}
           borderRadius={99}
           height={65}
           width={65}

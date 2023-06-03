@@ -42,7 +42,6 @@ const SettingsScreen = ({ navigation }: any) => {
       <View style={styles.screenContainer}>
         {/* Header title */}
         <Text style={styles.headerStyle}>Settings</Text>
-
         {/* Search bar */}
         <SearchBar
           //@ts-ignore

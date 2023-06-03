@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Image,
   Keyboard,
 } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
@@ -17,7 +18,9 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
 import ImageCache from "../controllers/ImageCache";
 import { userSliceType } from "../types/redux/sliceTypes";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { firebase } from "../../backend/firebase";
+import { userSlice } from "../redux/userSlice";
 
 const EditProfileScreen = ({ navigation }: any) => {
   //redux user global satte
@@ -28,6 +31,7 @@ const EditProfileScreen = ({ navigation }: any) => {
   );
   const stackNavigation =
     useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
+  const dispatch = useDispatch();
   const scrollViewRef = useRef(null);
   const [offsetY, setOffsetY] = useState(0);
   const [fullName, setFullName] = useState(user.fullName);
@@ -37,11 +41,31 @@ const EditProfileScreen = ({ navigation }: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     setOffsetY(offsetY);
   };
-
   useEffect(() => {
-    navigation.setParams({ offsetY }); // Pass the offsetY value to route.params
-  }, [offsetY]);
-
+    navigation.setParams({ offsetY, fullName }); // Pass the offsetY value to route.params
+  }, [offsetY, fullName]);
+  const handleBlurKeyboardEvent = async () => {
+    if (fullName != user.fullName)
+      //update firestore
+      try {
+        await firebase
+          .firestore()
+          .collection("Users")
+          .doc(user?.uniqueId)
+          .update({
+            fullName: fullName,
+          });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        //update redux
+        dispatch(
+          userSlice.actions.updateUserGlobalStateFullName({
+            fullName: fullName,
+          })
+        );
+      }
+  };
   return (
     <ScrollView
       style={styles.container}
@@ -60,6 +84,7 @@ const EditProfileScreen = ({ navigation }: any) => {
             borderRadius={99}
             imageType="User profile picture from edit profile screen"
           />
+
           {/* Description */}
           <Text style={styles.description}>
             Enter your name and, optionally, add a profile picture
@@ -80,8 +105,9 @@ const EditProfileScreen = ({ navigation }: any) => {
             style={styles.fullNameInput}
             value={fullName}
             maxLength={25}
-            onBlur={() => {
+            onBlur={async () => {
               setIsKeyboardOpen(false);
+              await handleBlurKeyboardEvent();
               navigation.setParams({ isKeyboardOpen: false });
             }}
             onFocus={() => {

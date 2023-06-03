@@ -367,7 +367,7 @@ const StackNavigator = () => {
               fontWeight: "600",
             },
             headerRight: () => {
-              if (route?.params?.isKeyboardOpen === true) return <OkButton />;
+              if (route?.params?.isKeyboardOpen === true) return <OkButton fullName={route?.params?.fullName}/>;
             },
             headerLeft: () => {
               if (route?.params?.isKeyboardOpen === true)
@@ -381,7 +381,9 @@ const StackNavigator = () => {
         component={ProfilePictureScreen}
         options={({ route }) => {
           return {
-            headerRight: () => <EditButton />,
+            headerRight: () => (
+              <EditButton />
+            ),
             headerTitle: "Profile picture",
           };
         }}

@@ -12,7 +12,9 @@ import { windowHeight, windowWidth } from "../constants/Dimensions";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { firebase } from "../../backend/firebase";
+import { userSlice } from "../redux/userSlice";
 
 const OnboardingScreen = () => {
   const navigation =
@@ -22,6 +24,7 @@ const OnboardingScreen = () => {
       //@ts-ignore
       state.user.user
   );
+  const dispatch = useDispatch();
   return (
     <SafeAreaView style={styles.container}>
       {/* Image */}
@@ -39,9 +42,17 @@ const OnboardingScreen = () => {
       </Text>
       {/* Button */}
       <TouchableOpacity
-        onPress={() => {
+        onPress={async () => {
           if (user === null) navigation.navigate("Signup");
-          else navigation.navigate("BottomTabNav");
+          else {
+            const user = await firebase
+              .firestore()
+              .collection("Users")
+              .doc("d94dc2e0-ee87-59c1-833b-4b49c0fe10e4")
+              .get();
+            dispatch(userSlice.actions.setUserGlobalState(user.data()));
+            navigation.navigate("BottomTabNav");
+          }
         }}
       >
         <Text style={styles.buttonText}>Agree & Continue</Text>
