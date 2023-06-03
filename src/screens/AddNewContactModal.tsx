@@ -30,9 +30,16 @@ const AddNewContactModal = ({ navigation }: any) => {
   useEffect(() => {
     navigation.setParams({ offsetY }); // Pass the offsetY value to route.params
     if (phoneNumber != "" && firstName != "" && lastName != "")
-      navigation.setParams({ contanctCanBeSaved: true });
+      navigation.setParams({
+        contanctCanBeSaved: true,
+        country,
+        countryCode,
+        firstName,
+        lastName,
+        phoneNumber,
+      });
     else navigation.setParams({ contanctCanBeSaved: false });
-  }, [offsetY, phoneNumber, firstName, lastName]);
+  }, [offsetY, phoneNumber, firstName, lastName, country, countryCode]);
   return (
     <ScrollView
       ref={scrollViewRef}

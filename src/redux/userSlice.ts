@@ -52,5 +52,14 @@ export const userSlice = createSlice({
             }
             console.log("Redux User Global State Updated");
         },
+        updateUserGlobalStateContactsArray: (state, action) => {
+            if (state.user) {
+                state.user = {
+                    ...state.user,
+                    contacts: action.payload.contacts
+                }
+            }
+            console.log("Redux User Global State Updated");
+        },
     }
 })

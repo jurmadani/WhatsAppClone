@@ -423,6 +423,11 @@ const StackNavigator = () => {
             headerRight: () => (
               <SaveButton
                 contanctCanBeSaved={route?.params?.contanctCanBeSaved}
+                firstName={route?.params?.firstName}
+                lastName={route?.params?.lastName}
+                country={route?.params?.country}
+                countryCode={route?.params?.countryCode}
+                phoneNumber={route?.params?.phoneNumber}
               />
             ),
             headerLeft: () => <CancelButton />,
