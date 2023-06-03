@@ -9,8 +9,14 @@ export type userSliceType = {
     country: string,
     status: string,
     imageURL: string
-    contacts: string[],
+    contacts: IContacts[],
     fullName: string;
     info: string
 
+}
+
+type IContacts = {
+    firstName: string;
+    lastName: string;
+    uniqueId: string;
 }

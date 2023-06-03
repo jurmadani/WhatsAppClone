@@ -1,6 +1,18 @@
 TODOS
 
-1)Make edit profile screen sync with firestore / redux
-2)Add contacts
+add logic fix : can't add yourself to contacts + can't add a person that you already have  
+
+2)in newconv modal when you tap on a contact go to a chatroom with him
+3)sync chats screen with backend
+4)add contacts bottom tab screen UI and sync it with backend
+5)status screen UI 
+6)calls?
+7)profile picture screen: finish action sheet (delete picture , take photo)
+
+
+
+
+
+
 3)Create a new chat room
 4)Design the rest of tables schemas
