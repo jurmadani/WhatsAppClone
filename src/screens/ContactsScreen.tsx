@@ -18,6 +18,7 @@ import { firebase } from "../../backend/firebase";
 import Contact from "../components/ContactsScreenComponents/Contact";
 
 const ContactsScreen = ({ navigation }: any) => {
+  const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [contactsArray, setContactsArray] = useState<ContactArrayItem[]>([]);
   const scrollViewRef = useRef(null);
@@ -92,6 +93,8 @@ const ContactsScreen = ({ navigation }: any) => {
       <SearchBar
         //@ts-ignore
         platform={Platform.OS === "ios" ? "ios" : "android"}
+        value={searchInput}
+        onChangeText={(text) => setSearchInput(text)}
         inputContainerStyle={[
           styles.inputContainerStyle,
           {
@@ -102,14 +105,19 @@ const ContactsScreen = ({ navigation }: any) => {
         placeholder={"Search"}
         showCancel={false}
       />
-      {/* Your contact card */}
-      <Text style={styles.text}>You</Text>
-      <Divider style={styles.divider} />
-      <YouContactCard
-        fullName={user.fullName}
-        imageURL={user.imageURL}
-        info={user.info}
-      />
+      {searchInput === "" && (
+        <View>
+          {/* Your contact card */}
+          <Text style={styles.text}>You</Text>
+          <Divider style={styles.divider} />
+          <YouContactCard
+            fullName={user.fullName}
+            imageURL={user.imageURL}
+            info={user.info}
+          />
+        </View>
+      )}
+
       {/* Other contacts */}
       <Text style={styles.text}>Whatsapp contacts</Text>
       <Divider style={styles.divider} />
@@ -124,22 +132,44 @@ const ContactsScreen = ({ navigation }: any) => {
         <FlatList
           data={contactsArray}
           scrollEnabled={false}
+          //@ts-ignore
           renderItem={({ index, item }) => {
-            let letterChanged = false;
-            if (index >= 1)
-              if (
-                item.lastName[0].toLowerCase() !=
-                contactsArray[index - 1].lastName[0].toLowerCase()
-              )
-                letterChanged = true;
+            if (searchInput === "") {
+              let letterChanged = false;
+              if (index >= 1)
+                if (
+                  item.lastName[0].toLowerCase() !=
+                  contactsArray[index - 1].lastName[0].toLowerCase()
+                )
+                  letterChanged = true;
 
-            return (
-              <Contact
-                index={index}
-                item={item}
-                didLetterChange={letterChanged}
-              />
-            );
+              return (
+                <Contact
+                  index={index}
+                  item={item}
+                  didLetterChange={letterChanged}
+                />
+              );
+            } else if (
+              item.lastName.toLowerCase().includes(searchInput.toLowerCase()) ||
+              item.firstName.toLowerCase().includes(searchInput.toLowerCase())
+            ) {
+              let letterChanged = false;
+              if (index >= 1)
+                if (
+                  item.lastName[0].toLowerCase() !=
+                  contactsArray[index - 1].lastName[0].toLowerCase()
+                )
+                  letterChanged = true;
+
+              return (
+                <Contact
+                  index={index}
+                  item={item}
+                  didLetterChange={letterChanged}
+                />
+              );
+            }
           }}
         />
       )}
