@@ -1,0 +1,193 @@
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Platform,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import { SearchBar } from "@rneui/base";
+import { Divider } from "@ui-kitten/components";
+import { userSliceType } from "../types/redux/sliceTypes";
+import { useSelector } from "react-redux";
+import YouContactCard from "../components/ContactsScreenComponents/YouContactCard";
+import { ContactArrayItem } from "../types/NewConversationModalScreenTypes/ContactsArrayType";
+import { firebase } from "../../backend/firebase";
+import Contact from "../components/ContactsScreenComponents/Contact";
+
+const ContactsScreen = ({ navigation }: any) => {
+  const [loading, setLoading] = useState(true);
+  const [contactsArray, setContactsArray] = useState<ContactArrayItem[]>([]);
+  const scrollViewRef = useRef(null);
+  const [offsetY, setOffsetY] = useState(0);
+  const user: userSliceType = useSelector(
+    //@ts-ignore
+    (state) => state.user.user
+  );
+  const handleScroll = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    setOffsetY(offsetY);
+  };
+
+  useEffect(() => {
+    navigation.setParams({ offsetY }); // Pass the offsetY value to route.params
+  }, [offsetY]);
+
+  useEffect(() => {
+    setContactsArray([]);
+    setLoading(true);
+
+    const fetchContacts = async () => {
+      try {
+        const contactsData = [];
+
+        for (const contact of user?.contacts) {
+          const snapshot = await firebase
+            .firestore()
+            .collection("Users")
+            .where("uniqueId", "==", contact.uniqueId)
+            .get();
+
+          const documents = snapshot.docs.map((doc) => doc.data());
+
+          if (documents.length !== 0) {
+            const newContactObject = {
+              firstName: contact.firstName,
+              lastName: contact.lastName,
+              uniqueId: contact.uniqueId,
+              imageURL: documents[0].imageURL,
+              info: documents[0].info,
+            };
+
+            contactsData.push(newContactObject);
+          }
+        }
+
+        const sortedContactsArray = contactsData.sort((a, b) =>
+          a.lastName.localeCompare(b.lastName)
+        );
+
+        setContactsArray(sortedContactsArray);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+      }
+    };
+
+    fetchContacts();
+  }, [user?.contacts]);
+
+  return (
+    <ScrollView
+      style={styles.screenContainer}
+      ref={scrollViewRef}
+      onScroll={handleScroll}
+      scrollEventThrottle={24}
+    >
+      {/* Header title */}
+      <Text style={styles.headerStyle}>Contacts</Text>
+      <SearchBar
+        //@ts-ignore
+        platform={Platform.OS === "ios" ? "ios" : "android"}
+        inputContainerStyle={[
+          styles.inputContainerStyle,
+          {
+            height: Platform.OS === "ios" ? 10 : 40,
+          },
+        ]}
+        containerStyle={styles.containerStyle}
+        placeholder={"Search"}
+        showCancel={false}
+      />
+      {/* Your contact card */}
+      <Text style={styles.text}>You</Text>
+      <Divider style={styles.divider} />
+      <YouContactCard
+        fullName={user.fullName}
+        imageURL={user.imageURL}
+        info={user.info}
+      />
+      {/* Other contacts */}
+      <Text style={styles.text}>Whatsapp contacts</Text>
+      <Divider style={styles.divider} />
+      {user.contacts.length === 0 ? (
+        <Text style={styles.noContancts}>No contacts</Text>
+      ) : loading ? (
+        <View>
+          <ActivityIndicator style={styles.noContancts} />
+          <Text style={styles.loading}>Loading...</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={contactsArray}
+          scrollEnabled={false}
+          renderItem={({ index, item }) => {
+            let letterChanged = false;
+            if (index >= 1)
+              if (
+                item.lastName[0].toLowerCase() !=
+                contactsArray[index - 1].lastName[0].toLowerCase()
+              )
+                letterChanged = true;
+
+            return (
+              <Contact
+                index={index}
+                item={item}
+                didLetterChange={letterChanged}
+              />
+            );
+          }}
+        />
+      )}
+    </ScrollView>
+  );
+};
+
+export default ContactsScreen;
+
+const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  headerStyle: {
+    fontWeight: "bold",
+    fontSize: 35,
+    paddingLeft: 20,
+    paddingTop: 20,
+  },
+  text: {
+    paddingLeft: 20,
+    paddingTop: 20,
+    opacity: 0.4,
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  inputContainerStyle: {
+    backgroundColor: "whitesmoke",
+  },
+  containerStyle: {
+    paddingLeft: 10,
+    marginTop: 10,
+    paddingRight: 10,
+  },
+  divider: {
+    marginLeft: 20,
+    top: 5,
+  },
+  noContancts: {
+    top: 100,
+    alignSelf: "center",
+    fontSize: 20,
+    fontWeight: "bold",
+    opacity: 0.5,
+  },
+  loading: {
+    top: 105,
+    alignSelf: "center",
+  },
+});

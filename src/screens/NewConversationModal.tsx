@@ -21,38 +21,41 @@ const NewConversationModal = () => {
     (state) => state.user.user
   );
   const [loading, setLoading] = useState(true);
-  console.log(loading);
   const [contactsArray, setContactsArray] = useState<ContactArrayItem[]>([]);
   useEffect(() => {
     setContactsArray([]);
     setLoading(true);
-    try {
-      //loop through users contacts list and get the contacts imageURL and info based on uniqueID
-      user?.contacts.forEach(async (contact) => {
-        const snapshot = await firebase
-          .firestore()
-          .collection("Users")
-          .where("uniqueId", "==", contact.uniqueId)
-          .get();
-        const documents = snapshot.docs.map((doc) => doc.data());
-        if (documents.length != 0) {
-          //spread the contacts user redux info and add the imageURL to it
-          const newContactObject = {
-            firstName: contact.firstName,
-            lastName: contact.lastName,
-            uniqueId: contact.uniqueId,
-            imageURL: documents[0].imageURL,
-            info: documents[0].info,
-          };
-          setContactsArray((prevContacts) => [
-            ...prevContacts,
-            newContactObject,
-          ]);
-        }
-      });
-    } catch (error) {
-      console.log(error);
-    }
+
+    const fetchContacts = async () => {
+      try {
+        //loop through users contacts list and get the contacts imageURL and info based on uniqueID
+        user?.contacts.forEach(async (contact) => {
+          const snapshot = await firebase
+            .firestore()
+            .collection("Users")
+            .where("uniqueId", "==", contact.uniqueId)
+            .get();
+          const documents = snapshot.docs.map((doc) => doc.data());
+          if (documents.length != 0) {
+            //spread the contacts user redux info and add the imageURL to it
+            const newContactObject = {
+              firstName: contact.firstName,
+              lastName: contact.lastName,
+              uniqueId: contact.uniqueId,
+              imageURL: documents[0].imageURL,
+              info: documents[0].info,
+            };
+            setContactsArray((prevContacts) => [
+              ...prevContacts,
+              newContactObject,
+            ]);
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchContacts();
     setLoading(false);
   }, [user?.contacts]);
 
@@ -75,7 +78,9 @@ const NewConversationModal = () => {
         </View>
       ) : (
         <FlatList
-          data={contactsArray}
+          data={contactsArray.sort((a, b) =>
+            a.lastName.localeCompare(b.lastName)
+          )}
           scrollEnabled={false}
           renderItem={({ index, item }) => (
             <Contact index={index} item={item} />

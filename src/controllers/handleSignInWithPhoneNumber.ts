@@ -13,9 +13,15 @@ export async function handleSignInWithPhoneNumber(phoneNumber: string,
     const getUID = require('uuid-by-string');
     const fullPhoneNumber = countryCode + phoneNumber
     try {
-        const userDoc = await firebase.firestore().collection('Users').doc(fullPhoneNumber).get();
+        const snapshot = await firebase
+            .firestore()
+            .collection("Users")
+            .where("phoneNumber", "==", phoneNumber)
+            .get();
+        const documents = snapshot.docs.map((doc) => doc.data());
 
-        if (userDoc.exists === false) {
+
+        if (documents.length === 0) {
             const userPayload = {
                 uniqueId: getUID(fullPhoneNumber),
                 phoneNumber: phoneNumber,

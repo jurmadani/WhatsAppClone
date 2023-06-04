@@ -5,9 +5,14 @@ import ImageCache from "../../controllers/ImageCache";
 import { Divider } from "@ui-kitten/components";
 import { windowWidth } from "../../constants/Dimensions";
 
-const Contact = ({ item, index }: RenderItemTypes) => {
+const Contact = ({ item, index, didLetterChange }: RenderItemTypes) => {
   return (
     <View>
+      {(index === 0 || didLetterChange === true) && (
+        <Text style={styles.currentLetter}>
+          {item.lastName[0].toUpperCase()}
+        </Text>
+      )}
       <View style={styles.container}>
         {/* Contact image */}
         <ImageCache
@@ -60,5 +65,12 @@ const styles = StyleSheet.create({
   },
   firstName: {
     fontSize: 17,
+  },
+  currentLetter: {
+    paddingLeft: 20,
+    paddingTop: 20,
+    opacity: 0.4,
+    fontSize: 16,
+    fontWeight: "600",
   },
 });

@@ -76,9 +76,7 @@ const SaveButton = ({
               );
             } else {
               //update firestore
-
               //query for the user information in firestore that the user want's to add as a contact
-
               try {
                 await firebase
                   .firestore()

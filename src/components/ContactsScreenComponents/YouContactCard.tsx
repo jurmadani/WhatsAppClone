@@ -1,31 +1,33 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { RenderItemTypes } from "../../types/NewConversationModalScreenTypes/RenderItemTypes";
-import ImageCache from "../../controllers/ImageCache";
-import { Divider } from "@ui-kitten/components";
+import { YouContactCardTypes } from "../../types/ContactsScreenComponentTypes/YouContactCardType";
 import { windowWidth } from "../../constants/Dimensions";
+import ImageCache from "../../controllers/ImageCache";
+import { userSliceType } from "../../types/redux/sliceTypes";
+import { useSelector } from "react-redux";
+import { Divider } from "@ui-kitten/components";
 
-const Contact = ({ item, index }: RenderItemTypes) => {
+const YouContactCard = ({ fullName, imageURL, info }: YouContactCardTypes) => {
+  const user: userSliceType = useSelector(
+    //@ts-ignore
+    (state) => state.user.user
+  );
   return (
     <View>
       <View style={styles.container}>
         {/* Contact image */}
         <ImageCache
-          uri={item.imageURL}
+          uri={imageURL}
           borderRadius={99}
           height={45}
           width={45}
-          imageType={
-            item.firstName + " " + item.lastName + " contact profile picture"
-          }
+          imageType="User image in YouContactCard component from Contacts screen "
         />
         <View style={styles.textContainer}>
           {/* first name and last name how the user saved the contact */}
-          <Text style={styles.firstName}>
-            {item.firstName} <Text style={styles.name}>{item.lastName}</Text>
-          </Text>
+          <Text style={styles.name}>{fullName}</Text>
           {/* contact info */}
-          <Text style={styles.info}>{item.info}</Text>
+          <Text style={styles.info}>{info}</Text>
         </View>
       </View>
       <Divider style={styles.divider} />
@@ -33,7 +35,7 @@ const Contact = ({ item, index }: RenderItemTypes) => {
   );
 };
 
-export default Contact;
+export default YouContactCard;
 
 const styles = StyleSheet.create({
   container: {

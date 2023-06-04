@@ -1,6 +1,7 @@
 export interface RenderItemTypes {
     item: Item;
     index: number;
+    didLetterChange?: boolean;
 }
 
 interface Item {
