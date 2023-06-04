@@ -6,6 +6,8 @@ import {
   ScrollView,
   Button,
   Platform,
+  ActivityIndicator,
+  Image,
 } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import { chats } from "../../dummy-test-data/chats";
@@ -13,8 +15,17 @@ import ChatListItem from "../components/ChatsScreenComponents/ChatListItem";
 import { SearchBar } from "@rneui/themed";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Divider } from "@ui-kitten/components";
+import { IChatRooms, userSliceType } from "../types/redux/sliceTypes";
+import { useSelector } from "react-redux";
+import { firebase } from "../../backend/firebase";
 
 const ChatsScreen = ({ navigation }: any) => {
+  const [chatRoomsArray, setChatRoomsArray] = useState<IChatRooms[]>([]);
+  const [loading, setLoading] = useState(false);
+  const user: userSliceType = useSelector(
+    //@ts-ignore
+    (state) => state.user.user
+  );
   const scrollViewRef = useRef(null);
   const [offsetY, setOffsetY] = useState(0);
 
@@ -27,6 +38,50 @@ const ChatsScreen = ({ navigation }: any) => {
     navigation.setParams({ offsetY }); // Pass the offsetY value to route.params
   }, [offsetY]);
 
+  useEffect(() => {
+    setLoading(true);
+    setChatRoomsArray([]);
+    const fetchChatRooms = async () => {
+      try {
+        const chatRoomsData: IChatRooms[] = [];
+
+        for (const chatRoom of user?.chatRooms) {
+          const snapshot = await firebase
+            .firestore()
+            .collection("ChatRooms")
+            .where("chatRoomId", "==", chatRoom.chatRoomId)
+            .get();
+
+          const documents = snapshot.docs.map((doc) => doc.data());
+
+          if (documents.length !== 0) {
+            const newChatRoomObject = {
+              chatRoomId: documents[0].chatRoomId,
+              messages: documents[0].messages,
+              users: documents[0].users,
+              lastMessage: documents[0].lastMessage,
+            };
+
+            chatRoomsData.push(newChatRoomObject);
+          }
+        }
+
+        const sortedChatRoomsArray = chatRoomsData.sort(function (a, b) {
+          return (
+            new Date(a.lastMessage.createdAt).getTime() -
+            new Date(b.lastMessage.createdAt).getTime()
+          );
+        });
+
+        setChatRoomsArray(sortedChatRoomsArray);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+      }
+    };
+    fetchChatRooms().then(() => console.log("Fetching chat rooms completed"));
+  }, []);
   return (
     <ScrollView
       style={styles.screenContainer}
@@ -71,15 +126,28 @@ const ChatsScreen = ({ navigation }: any) => {
           <Button title="New group" color={"#3396FD"} />
         </View>
         <Divider />
-        <FlatList
-          data={chats}
-          showsVerticalScrollIndicator={false}
-          renderItem={(item) => <ChatListItem item={item.item} />}
-          scrollEnabled={false}
-          contentContainerStyle={{
-            paddingBottom: 95,
-          }}
-        />
+        {loading ? (
+          <ActivityIndicator style={styles.loading} />
+        ) : chatRoomsArray.length === 0 ? (
+          <View style={styles.noChatRooms}>
+            <Image
+              source={require("../../assets/images/Illustration_mobile_whatsapp.png")}
+              style={styles.image}
+            />
+            <Text style={styles.title}>No conversations</Text>
+            <Text style={styles.text}>Add a contact and start chatting</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={chats}
+            showsVerticalScrollIndicator={false}
+            renderItem={(item) => <ChatListItem item={item.item} />}
+            scrollEnabled={false}
+            contentContainerStyle={{
+              paddingBottom: 95,
+            }}
+          />
+        )}
       </View>
     </ScrollView>
   );
@@ -124,6 +192,28 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     paddingRight: 5,
     paddingLeft: 5,
+  },
+  loading: {
+    marginTop: 50,
+  },
+  noChatRooms: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 50,
+  },
+  image: {
+    height: 130,
+    width: 186,
+  },
+  title: {
+    fontSize: 30,
+    paddingTop: 25,
+  },
+  text: {
+    paddingTop: 10,
+    fontSize: 15,
+    opacity: 0.4,
   },
 });
 

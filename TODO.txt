@@ -1,7 +1,6 @@
 TODOS
 
-add logic fix : can't add yourself to contacts + can't add a person that you already have  
-
+  
 2)in newconv modal when you tap on a contact go to a chatroom with him
 3)sync chats screen with backend
 4)add contacts bottom tab screen UI and sync it with backend

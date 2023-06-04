@@ -10,6 +10,7 @@ export type userSliceType = {
     status: string,
     imageURL: string
     contacts: IContacts[],
+    chatRooms: IChatRooms[],
     fullName: string;
     info: string
 
@@ -20,3 +21,19 @@ type IContacts = {
     lastName: string;
     uniqueId: string;
 }
+
+export type IChatRooms = {
+    chatRoomId: string;
+    messages: IMessage[];
+    users: string[];
+    lastMessage: IMessage;
+}
+
+type IMessage = {
+    messageId: string;
+    text: string;
+    createdAt: Date;
+    chatRoomId: string;
+    senderUniqueId: string;
+}
+
