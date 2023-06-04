@@ -113,6 +113,7 @@ const ChatScreen = ({ route }: any) => {
             })}
             renderItem={({ item }) => <Message item={item} />}
             style={styles.list}
+            inverted
           />
         )}
 
