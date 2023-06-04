@@ -62,5 +62,14 @@ export const userSlice = createSlice({
             }
             console.log("Redux User Global State Updated");
         },
+        updateUserGlobalStateChatRoomsArray: (state, action) => {
+            if (state.user) {
+                state.user = {
+                    ...state.user,
+                    chatRooms: action.payload.chatRoomObject
+                }
+            }
+            console.log("Redux User Global State Updated");
+        },
     }
 })

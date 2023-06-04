@@ -24,8 +24,7 @@ const ContactsScreen = ({ navigation }: any) => {
   const scrollViewRef = useRef(null);
   const [offsetY, setOffsetY] = useState(0);
   const user: userSliceType = useSelector(
-    //@ts-ignore
-    (state) => state.user.user
+    (state : any) => state.user.user
   );
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;

@@ -29,6 +29,7 @@ import SaveButton from "../components/AddNewContactModalComponents/SaveButton";
 import CancelButton from "../components/AddNewContactModalComponents/CancelButton";
 import CountriesModalHeader from "../components/CountriesModalComponents/CountriesModalHeader";
 import CountriesModal from "../screens/CountriesModal";
+import ImageCache from "../controllers/ImageCache";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -234,10 +235,13 @@ const StackNavigator = () => {
         component={ChatScreen}
         options={({ route }) => {
           return {
+            headerStyle: {
+              backgroundColor: "whitesmoke",
+            },
             headerTitle: "",
             headerLeft: () => (
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
                   <Ionicons
                     name="ios-chevron-back"
                     size={35}
@@ -245,15 +249,22 @@ const StackNavigator = () => {
                     style={{ right: 10 }}
                   />
                 </TouchableOpacity>
-                <Avatar
-                  source={{ uri: route.params?.item.user.image }}
-                  style={{ height: 38, width: 38 }}
+                <ImageCache
+                  uri={route?.params?.imageURL}
+                  height={38}
+                  width={38}
+                  borderRadius={99}
+                  imageType={
+                    route?.params?.firstName +
+                    route?.params?.lastName +
+                    " image from chat screen"
+                  }
                 />
                 <View>
                   <Text
                     style={{ fontSize: 17, fontWeight: "600", paddingLeft: 10 }}
                   >
-                    {route.params?.item.user.name}
+                    {route?.params?.firstName} {route?.params?.lastName}
                   </Text>
                   <Text
                     style={{

@@ -49,7 +49,7 @@ const ChatsScreen = ({ navigation }: any) => {
           const snapshot = await firebase
             .firestore()
             .collection("ChatRooms")
-            .where("chatRoomId", "==", chatRoom.chatRoomId)
+            .where("chatRoomId", "==", chatRoom)
             .get();
 
           const documents = snapshot.docs.map((doc) => doc.data());
