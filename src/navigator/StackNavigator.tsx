@@ -14,7 +14,7 @@ import { windowHeight } from "../constants/Dimensions";
 import { SearchBar } from "@rneui/base";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import SignupScreen from "../screens/SignupScreen";
-import { firebase } from "../../backend/firebase";
+import { useState, useEffect } from "react";
 import { handleSignInWithPhoneNumber } from "../controllers/handleSignInWithPhoneNumber";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
@@ -295,63 +295,71 @@ const StackNavigator = () => {
         options={({ navigation, route }) => {
           return {
             presentation: "modal",
-            header: () => (
-              <View style={{ backgroundColor: "white", paddingTop: 20 }}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginBottom: 15,
-                  }}
-                >
-                  <Text
+            header: () => {
+              const [searchInput, setSearchInput] = useState("");
+              useEffect(() => {
+                navigation.setParams({ searchInput });
+              }, [searchInput]);
+              return (
+                <View style={{ backgroundColor: "white", paddingTop: 20 }}>
+                  <View
                     style={{
-                      fontWeight: "bold",
-                      fontSize: 17,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: 15,
                     }}
                   >
-                    New conversation
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    style={{
-                      alignSelf: "center",
-                      position: "absolute",
-                      left: windowHeight / 2.45,
-                    }}
-                  >
-                    <Ionicons
-                      name="close"
-                      size={30}
-                      color={"#B4B4B4"}
+                    <Text
                       style={{
-                        backgroundColor: "whitesmoke",
-                        borderRadius: 15,
-                        overflow: "hidden",
+                        fontWeight: "bold",
+                        fontSize: 17,
                       }}
-                    />
-                  </TouchableOpacity>
+                    >
+                      New conversation
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={{
+                        alignSelf: "center",
+                        position: "absolute",
+                        left: windowHeight / 2.45,
+                      }}
+                    >
+                      <Ionicons
+                        name="close"
+                        size={30}
+                        color={"#B4B4B4"}
+                        style={{
+                          backgroundColor: "whitesmoke",
+                          borderRadius: 15,
+                          overflow: "hidden",
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <SearchBar
+                    //@ts-ignore
+                    platform={Platform.OS === "ios" ? "ios" : "android"}
+                    placeholder={"Search"}
+                    showCancel={false}
+                    value={searchInput}
+                    onChangeText={(text) => setSearchInput(text)}
+                    inputContainerStyle={{
+                      height: 10,
+                      backgroundColor: "whitesmoke",
+                    }}
+                    containerStyle={{
+                      marginTop: 5,
+                      marginBottom: 15,
+                      width: "96%",
+                      alignSelf: "center",
+                    }}
+                  />
+                  <Divider />
                 </View>
-                <SearchBar
-                  //@ts-ignore
-                  platform={Platform.OS === "ios" ? "ios" : "android"}
-                  placeholder={"Search"}
-                  showCancel={false}
-                  inputContainerStyle={{
-                    height: 10,
-                    backgroundColor: "whitesmoke",
-                  }}
-                  containerStyle={{
-                    marginTop: 5,
-                    marginBottom: 15,
-                    width: "96%",
-                    alignSelf: "center",
-                  }}
-                />
-                <Divider />
-              </View>
-            ),
+              );
+            },
           };
         }}
       />

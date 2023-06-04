@@ -15,7 +15,7 @@ import Contact from "../components/NewConversationModalComponents/RenderItem";
 import { firebase } from "../../backend/firebase";
 import { ContactArrayItem } from "../types/NewConversationModalScreenTypes/ContactsArrayType";
 
-const NewConversationModal = () => {
+const NewConversationModal = ({ route }: any) => {
   const user: userSliceType = useSelector(
     //@ts-ignore
     (state) => state.user.user
@@ -61,13 +61,17 @@ const NewConversationModal = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* new group button */}
-      <Button iconName="people" buttonName="New group" />
-      {/* new contact button */}
-      <Button iconName="person-add" buttonName="New contact" />
-      {/* Title */}
-      <Text style={styles.title}>Whatsapp contacts</Text>
-      <Divider style={styles.divider} />
+      {route?.params?.searchInput === "" && (
+        <View>
+          {/* new group button */}
+          <Button iconName="people" buttonName="New group" />
+          {/* new contact button */}
+          <Button iconName="person-add" buttonName="New contact" />
+          {/* Title */}
+          <Text style={styles.title}>Whatsapp contacts</Text>
+          <Divider style={styles.divider} />
+        </View>
+      )}
 
       {user.contacts.length === 0 ? (
         <Text style={styles.noContancts}>No contacts</Text>
@@ -82,9 +86,20 @@ const NewConversationModal = () => {
             a.lastName.localeCompare(b.lastName)
           )}
           scrollEnabled={false}
-          renderItem={({ index, item }) => (
-            <Contact index={index} item={item} />
-          )}
+          //@ts-ignore
+          renderItem={({ index, item }) => {
+            if (route?.params?.searchInput === "")
+              return <Contact index={index} item={item} />;
+            else if (
+              item.lastName
+                .toLowerCase()
+                .includes(route?.params?.searchInput.toLowerCase()) ||
+              item.firstName
+                .toLowerCase()
+                .includes(route?.params?.searchInput.toLowerCase())
+            )
+              return <Contact index={index} item={item} />;
+          }}
         />
       )}
     </ScrollView>
