@@ -29,7 +29,7 @@ const Message = ({ item, index }: MessageType) => {
         <Text style={styles.time}>
           {new Date(item.createdAt.toDate()).toLocaleTimeString().slice(0, 5)}
         </Text>
-        {isMyMessage() &&  (
+        {isMyMessage() && (
           <Image
             source={require("../../../assets/icons/doubleTick.png")}
             style={styles.icon}

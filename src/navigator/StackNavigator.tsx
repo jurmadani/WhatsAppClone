@@ -30,6 +30,8 @@ import CancelButton from "../components/AddNewContactModalComponents/CancelButto
 import CountriesModalHeader from "../components/CountriesModalComponents/CountriesModalHeader";
 import CountriesModal from "../screens/CountriesModal";
 import ImageCache from "../controllers/ImageCache";
+import ContactDetailsScreen from "../screens/ContactDetailsScreen";
+import HeaderLeftAccessory from "../components/ContactDetailsScreenComponents/HeaderLeftAccessory";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -260,22 +262,32 @@ const StackNavigator = () => {
                     " image from chat screen"
                   }
                 />
-                <View>
-                  <Text
-                    style={{ fontSize: 17, fontWeight: "600", paddingLeft: 10 }}
-                  >
-                    {route?.params?.firstName} {route?.params?.lastName}
-                  </Text>
-                  <Text
-                    style={{
-                      paddingLeft: 10,
-                      fontSize: 11.5,
-                      color: "#8E8E93",
-                    }}
-                  >
-                    tap here for contact info
-                  </Text>
-                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("ContactDetails");
+                  }}
+                >
+                  <View>
+                    <Text
+                      style={{
+                        fontSize: 17,
+                        fontWeight: "600",
+                        paddingLeft: 10,
+                      }}
+                    >
+                      {route?.params?.firstName} {route?.params?.lastName}
+                    </Text>
+                    <Text
+                      style={{
+                        paddingLeft: 10,
+                        fontSize: 11.5,
+                        color: "#8E8E93",
+                      }}
+                    >
+                      tap here for contact info
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               </View>
             ),
             headerRight: () => (
@@ -465,6 +477,16 @@ const StackNavigator = () => {
               />
             ),
             presentation: "modal",
+          };
+        }}
+      />
+      <Stack.Screen
+        name="ContactDetails"
+        component={ContactDetailsScreen}
+        options={({ route }) => {
+          return {
+            headerTitle: "Contact details",
+            headerRight: () => <HeaderLeftAccessory />,
           };
         }}
       />

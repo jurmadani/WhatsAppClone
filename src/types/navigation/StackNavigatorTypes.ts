@@ -6,8 +6,9 @@ export type StackNavigatorTypes = {
   ChatScreen: any;
   NewConversationModal: any
   AddNewContactModal: any
-  CountriesModal:any
+  CountriesModal: any
   EditProfile: any
   ProfilePicture: any;
   ChooseInfo: any;
+  ContactDetails: any
 };

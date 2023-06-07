@@ -79,14 +79,6 @@ const ChatScreen = ({ route }: any) => {
           " " +
           route?.params?.lastName
       );
-      console.log(
-        "ChatRoomId: " +
-          chatRoomId +
-          " users did chat before: " +
-          usersDidChatBefore +
-          " messages array: " +
-          messagesArray
-      );
     });
   }, [user?.chatRooms, chatRoomId]);
 
