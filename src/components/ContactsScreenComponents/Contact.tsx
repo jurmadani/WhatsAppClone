@@ -24,8 +24,8 @@ const Contact = ({ item, index, didLetterChange }: RenderItemTypes) => {
             firstName: item.firstName,
             lastName: item.lastName,
             imageURL: item.imageURL,
-            uniqueId: item.uniqueId,
-            info: item.info,
+            otherUserUniqueId: item.uniqueId,
+            chatRoomId: item.chatRoomId,
           })
         }
       >

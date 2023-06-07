@@ -1,6 +1,11 @@
 TODOS
 
+
+BEST WAY:
+LOOK AT OTHERS HOW THEY DID IT AND MAYBE REOPTIMIZE-CODE EVEN BETTER OR JUST START OVER
   
+BUG FIX: REGARDING MESSAGE COMPONENT : IT GETS THE PREVIOUS TIMESTAMP AND ONLY ON RERENDER IT SAVES THE TIMESTAMP CORRECTLY
+
 2)in newconv modal when you tap on a contact go to a chatroom with him
 3)sync chats screen with backend
 4)add contacts bottom tab screen UI and sync it with backend

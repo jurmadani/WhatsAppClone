@@ -10,4 +10,5 @@ interface Item {
     lastName: string;
     imageURL: string;
     info: string
+    chatRoomId: string;
 }

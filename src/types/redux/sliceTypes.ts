@@ -16,7 +16,7 @@ export type userSliceType = {
 
 }
 
-type IContacts = {
+export type IContacts = {
     firstName: string;
     lastName: string;
     uniqueId: string;
@@ -26,12 +26,17 @@ export type IChatRooms = {
     chatRoomId: string;
     messages: IMessage[];
     users: string[];
-    lastMessage: IMessage;
+    lastMessage: string;
+}
+
+export type timestamp = {
+    seconds: number;
+    nanoseconds: number
 }
 
 export type IMessage = {
     text: string;
-    createdAt: Date;
+    createdAt: timestamp;
     chatRoomId: string;
     senderUniqueId: string;
 }

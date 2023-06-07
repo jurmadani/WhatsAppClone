@@ -4,4 +4,5 @@ export interface ContactArrayItem {
     info: string;
     imageURL: string;
     uniqueId: string;
+    chatRoomId: string
 }

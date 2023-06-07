@@ -19,8 +19,8 @@ const InputBox = ({
   otherUserUniqueId,
   setDidUsersChatBefore,
   chatRoom,
+  setChatRoomId,
   messagesArray,
-  setMessagesArray,
 }: InputBoxTypes) => {
   const user: userSliceType = useSelector((state: any) => state.user.user);
   const dispatch = useDispatch();
@@ -93,6 +93,7 @@ const InputBox = ({
           })
         );
         setDidUsersChatBefore(true);
+        setChatRoomId(docRef.id);
         console.log("Created new chat room document in firestore");
         setMessage("");
       } catch (error) {
@@ -100,28 +101,21 @@ const InputBox = ({
       }
     } else if (chatRoom != undefined && usersDidChatBefore === true) {
       //add to the existing chat room
-
-      setMessagesArray((prevArray) => [
-        ...prevArray,
-        {
-          chatRoomId: chatRoom.chatRoomId,
-          createdAt: new Date(),
-          text: message,
-          senderUniqueId: user.uniqueId,
-        },
-      ]);
-
       await firebase
         .firestore()
         .collection("ChatRooms")
         .doc(chatRoom.chatRoomId)
         .update({
-          messages: firebase.firestore.FieldValue.arrayUnion({
-            chatRoomId: chatRoom.chatRoomId,
-            createdAt: new Date(),
-            text: message,
-            senderUniqueId: user.uniqueId,
-          }),
+          messages: [
+            ...messagesArray,
+            {
+              chatRoomId: chatRoom.chatRoomId,
+              createdAt: new Date(),
+              text: message,
+              senderUniqueId: user.uniqueId,
+            },
+          ],
+          lastMessage: message,
         });
       setMessage("");
     }

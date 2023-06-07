@@ -18,69 +18,77 @@ import Entypo from "react-native-vector-icons/Entypo";
 
 const ChatScreen = ({ route }: any) => {
   const user: userSliceType = useSelector((state: any) => state.user.user);
+  const [chatRoomId, setChatRoomId] = useState(route?.params?.chatRoomId);
   const [loading, setLoading] = useState(false);
-  const [usersDidChatBefore, setDidUsersChatBefore] = useState(true);
+  const [usersDidChatBefore, setDidUsersChatBefore] = useState(false);
   const [messagesArray, setMessagesArray] = useState<IMessage[]>([]);
   const [chatRoom, setChatRoom] = useState<IChatRooms>();
 
-  useEffect(() => {
-    setLoading(true);
-    const fetchMessages = async () => {
-      if (user?.chatRooms.length === 0) {
-        setDidUsersChatBefore(false);
-      } else {
-        const userChatRoomsSnapshot = await firebase
+  const fetchMessages = async () => {
+    if (chatRoomId != "")
+      try {
+        const chatRoomRef = await firebase
           .firestore()
           .collection("ChatRooms")
-          .where("users", "array-contains", user?.uniqueId)
+          .doc(chatRoomId)
           .get();
 
-        const otherUserChatRoomsSnapshot = await firebase
-          .firestore()
-          .collection("ChatRooms")
-          .where("users", "array-contains", route?.params?.uniqueId)
-          .get();
+        const chatRoomDocument = chatRoomRef?.data();
 
-        const userChatRooms = userChatRoomsSnapshot.docs.map((doc) =>
-          doc.data()
-        );
-        const otherUserChatRooms = otherUserChatRoomsSnapshot.docs.map((doc) =>
-          doc.data()
-        );
+        if (chatRoomDocument) {
+          setMessagesArray(chatRoomDocument.messages);
+          //@ts-expect-error
+          setChatRoom(chatRoomDocument);
 
-        const commonChatRoom = userChatRooms.find((chatRoom) =>
-          otherUserChatRooms.some(
-            (otherChatRoom) => chatRoom.chatRoomId === otherChatRoom.chatRoomId
-          )
-        );
-
-        if (commonChatRoom) {
-          setDidUsersChatBefore(true);
-          setChatRoom(commonChatRoom as IChatRooms); // Cast the type to IChatRooms
-
-          // Fetch messages for the common chat room
-          const chatRoomMessagesSnapshot = await firebase
+          const unsubscribe = firebase
             .firestore()
             .collection("ChatRooms")
-            .doc(commonChatRoom.chatRoomId)
-            .get();
+            .doc(chatRoomId)
+            .onSnapshot((snapshot) => {
+              const updatedChatRoomData = snapshot.data();
+              if (updatedChatRoomData) {
+                setMessagesArray(updatedChatRoomData.messages);
+                //@ts-ignore
+                setChatRoom(updatedChatRoomData);
+              }
+            });
 
-          const chatRoomData = chatRoomMessagesSnapshot.data();
-          setMessagesArray(chatRoomData?.messages);
-        } else {
-          setDidUsersChatBefore(false);
+          return () => {
+            unsubscribe();
+          };
         }
-      }
-    };
-
-    try {
-      fetchMessages().then(() => {
+      } catch (error) {
+        console.log("Error fetching messages:", error);
+      } finally {
         setLoading(false);
-      });
-    } catch (error) {
-      console.log(error);
+        setDidUsersChatBefore(true);
+      }
+    else {
+      setLoading(false);
     }
-  }, [user?.chatRooms, user?.uniqueId, route?.params?.uniqueId]);
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    fetchMessages().then(() => {
+      console.log(
+        "Fetched messages done for chat-room between " +
+          user.fullName +
+          " and " +
+          route?.params.firstName +
+          " " +
+          route?.params?.lastName
+      );
+      console.log(
+        "ChatRoomId: " +
+          chatRoomId +
+          " users did chat before: " +
+          usersDidChatBefore +
+          " messages array: " +
+          messagesArray
+      );
+    });
+  }, [user?.chatRooms, chatRoomId]);
 
   return (
     <KeyboardAvoidingView
@@ -106,21 +114,28 @@ const ChatScreen = ({ route }: any) => {
           </View>
         ) : (
           <FlatList
-            data={messagesArray.sort((a, b) => {
-              const dateA = new Date(a.createdAt).getTime();
-              const dateB = new Date(b.createdAt).getTime();
-              return dateB - dateA; // Sort in descending order (newest to oldest)
-            })}
-            renderItem={({ item }) => <Message item={item} />}
-            style={styles.list}
             inverted
+            data={messagesArray.sort((a, b) => {
+              const createdAtA = a.createdAt;
+              const createdAtB = b.createdAt;
+              if (createdAtA.seconds === createdAtB.seconds) {
+                return createdAtB.nanoseconds - createdAtA.nanoseconds;
+              } else {
+                return createdAtB.seconds - createdAtA.seconds;
+              }
+            })} // Reverse the array to display messages in descending order
+            renderItem={({ item, index }) => (
+              <Message item={item} index={index} />
+            )}
+            style={styles.list}
           />
         )}
 
         <InputBox
           usersDidChatBefore={usersDidChatBefore}
-          otherUserUniqueId={route?.params?.uniqueId}
+          otherUserUniqueId={route?.params?.otherUserUniqueId}
           setDidUsersChatBefore={setDidUsersChatBefore}
+          setChatRoomId={setChatRoomId}
           chatRoom={chatRoom}
           messagesArray={messagesArray}
           setMessagesArray={setMessagesArray}

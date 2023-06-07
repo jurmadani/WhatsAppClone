@@ -1,45 +1,17 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { userSliceType } from "../../types/redux/sliceTypes";
 import { useSelector } from "react-redux";
+import { MessageType } from "../../types/ChatScreenComponentTypes/MessageType";
 
-const Message = ({ item }: any) => {
-  const [timestamp, setTimestamp] = useState("");
-  const transformTimestamp = () => {
-    if (
-      item.createdAt.nanoseconds != undefined &&
-      item.createdAt.seconds != undefined
-    ) {
-      const createdAt = item.createdAt && item.createdAt.toDate(); // Check if item.createdAt exists before calling toDate()
-      const formattedTime = createdAt
-        ? createdAt.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-        : "";
-      return formattedTime;
-    } else {
-      const formattedTime = item.createdAt
-        ? item.createdAt.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-        : "";
-      return formattedTime;
-    }
-  };
-
-  useEffect(() => {
-    const timestamp = transformTimestamp();
-    setTimestamp(timestamp);
-  }, []);
-
+const Message = ({ item, index }: MessageType) => {
   const user: userSliceType = useSelector((state: any) => state.user.user);
   const isMyMessage = () => {
     return item.senderUniqueId === user.uniqueId;
   };
+
   return (
     <View
       style={[
@@ -52,7 +24,18 @@ const Message = ({ item }: any) => {
     >
       {/* Messages */}
       <Text style={styles.message}>{item.text}</Text>
-      <Text style={styles.time}>{timestamp}</Text>
+      {/* Timestamp and tick status */}
+      <View style={styles.timestampView}>
+        <Text style={styles.time}>
+          {new Date(item.createdAt.toDate()).toLocaleTimeString().slice(0, 5)}
+        </Text>
+        {isMyMessage() &&  (
+          <Image
+            source={require("../../../assets/icons/doubleTick.png")}
+            style={styles.icon}
+          />
+        )}
+      </View>
     </View>
   );
 };
@@ -85,5 +68,16 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     opacity: 0.3,
     fontSize: 13,
+  },
+  timestampView: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  icon: {
+    height: 16,
+    width: 16,
+    marginLeft: 3,
+    tintColor: "#3396FD",
   },
 });

@@ -16,6 +16,7 @@ import YouContactCard from "../components/ContactsScreenComponents/YouContactCar
 import { ContactArrayItem } from "../types/NewConversationModalScreenTypes/ContactsArrayType";
 import { firebase } from "../../backend/firebase";
 import Contact from "../components/ContactsScreenComponents/Contact";
+import ToastNotification from "../controllers/ToastNotification";
 
 const ContactsScreen = ({ navigation }: any) => {
   const [searchInput, setSearchInput] = useState("");
@@ -23,9 +24,7 @@ const ContactsScreen = ({ navigation }: any) => {
   const [contactsArray, setContactsArray] = useState<ContactArrayItem[]>([]);
   const scrollViewRef = useRef(null);
   const [offsetY, setOffsetY] = useState(0);
-  const user: userSliceType = useSelector(
-    (state : any) => state.user.user
-  );
+  const user: userSliceType = useSelector((state: any) => state.user.user);
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     setOffsetY(offsetY);
@@ -53,18 +52,44 @@ const ContactsScreen = ({ navigation }: any) => {
           const documents = snapshot.docs.map((doc) => doc.data());
 
           if (documents.length !== 0) {
-            const newContactObject = {
-              firstName: contact.firstName,
-              lastName: contact.lastName,
-              uniqueId: contact.uniqueId,
-              imageURL: documents[0].imageURL,
-              info: documents[0].info,
-            };
+            const chatRoomsThatUserCurrentlyLoggedInIsIn = await firebase
+              .firestore()
+              .collection("ChatRooms")
+              .where("users", "array-contains", user?.uniqueId)
+              .get();
+            const chatRoomsDocuments =
+              chatRoomsThatUserCurrentlyLoggedInIsIn.docs.map((doc) =>
+                doc.data()
+              );
 
-            contactsData.push(newContactObject);
+            let found = false;
+            chatRoomsDocuments.map((document) => {
+              if (document.users.includes(contact.uniqueId)) {
+                const newContactObject = {
+                  firstName: contact.firstName,
+                  lastName: contact.lastName,
+                  uniqueId: contact.uniqueId,
+                  imageURL: documents[0].imageURL,
+                  info: documents[0].info,
+                  chatRoomId: document.chatRoomId,
+                };
+                contactsData.push(newContactObject);
+                found = true;
+              }
+            });
+            if (!found) {
+              const newContactObject = {
+                firstName: contact.firstName,
+                lastName: contact.lastName,
+                uniqueId: contact.uniqueId,
+                imageURL: documents[0].imageURL,
+                info: documents[0].info,
+                chatRoomId: "",
+              };
+              contactsData.push(newContactObject);
+            }
           }
         }
-
         const sortedContactsArray = contactsData.sort((a, b) =>
           a.lastName.localeCompare(b.lastName)
         );
@@ -77,8 +102,8 @@ const ContactsScreen = ({ navigation }: any) => {
       }
     };
 
-    fetchContacts();
-  }, [user?.contacts]);
+    fetchContacts().then(() => console.log("Done fetching contacts"));
+  }, [user?.contacts, user?.chatRooms]);
 
   return (
     <ScrollView
@@ -104,6 +129,7 @@ const ContactsScreen = ({ navigation }: any) => {
         placeholder={"Search"}
         showCancel={false}
       />
+
       {searchInput === "" && (
         <View>
           {/* Your contact card */}

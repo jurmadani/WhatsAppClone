@@ -18,10 +18,18 @@ import { Divider } from "@ui-kitten/components";
 import { IChatRooms, userSliceType } from "../types/redux/sliceTypes";
 import { useSelector } from "react-redux";
 import { firebase } from "../../backend/firebase";
+import ToastNotification from "../controllers/ToastNotification";
+
+export interface IChatRoomsExtended extends IChatRooms {
+  lastMessageTimestamp: string;
+}
 
 const ChatsScreen = ({ navigation }: any) => {
-  const [chatRoomsArray, setChatRoomsArray] = useState<IChatRooms[]>([]);
+  const [chatRoomsArray, setChatRoomsArray] = useState<IChatRoomsExtended[]>(
+    []
+  );
   const [loading, setLoading] = useState(false);
+
   const user: userSliceType = useSelector(
     //@ts-ignore
     (state) => state.user.user
@@ -41,47 +49,95 @@ const ChatsScreen = ({ navigation }: any) => {
   useEffect(() => {
     setLoading(true);
     setChatRoomsArray([]);
+
     const fetchChatRooms = async () => {
       try {
-        const chatRoomsData: IChatRooms[] = [];
-
-        for (const chatRoom of user?.chatRooms) {
-          const snapshot = await firebase
+        const chatRoomIds = user?.chatRooms || [];
+        const promises = chatRoomIds.map(async (chatRoomId) => {
+          const chatRoomRef = firebase
             .firestore()
             .collection("ChatRooms")
-            .where("chatRoomId", "==", chatRoom)
-            .get();
+            .doc(chatRoomId);
 
-          const documents = snapshot.docs.map((doc) => doc.data());
+          const chatRoomSnapshot = await chatRoomRef.get();
+          if (chatRoomSnapshot.exists) {
+            const chatRoomData = chatRoomSnapshot.data();
 
-          if (documents.length !== 0) {
-            const newChatRoomObject = {
-              chatRoomId: documents[0].chatRoomId,
-              messages: documents[0].messages,
-              users: documents[0].users,
-              lastMessage: documents[0].lastMessage,
-            };
+            if (chatRoomData) {
+              const lastMessageIndex = chatRoomData.messages.length - 1;
+              const lastMessage = chatRoomData.messages[lastMessageIndex];
+              const lastMessageCreatedAt = lastMessage.createdAt.toDate();
+              const formattedTime = lastMessageCreatedAt.toLocaleTimeString(
+                [],
+                {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }
+              );
 
-            chatRoomsData.push(newChatRoomObject);
+              // Add a listener to the chat room document to listen for changes
+              chatRoomRef.onSnapshot((snapshot) => {
+                const updatedChatRoomData = snapshot.data();
+                if (updatedChatRoomData) {
+                  const updatedLastMessageIndex =
+                    updatedChatRoomData.messages.length - 1;
+                  const updatedLastMessage =
+                    updatedChatRoomData.messages[updatedLastMessageIndex];
+                  const updatedLastMessageCreatedAt =
+                    updatedLastMessage.createdAt.toDate();
+                  const updatedFormattedTime =
+                    updatedLastMessageCreatedAt.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    });
+
+                  // Update the chat room data in the state with the updated last message and formatted time
+                  setChatRoomsArray((prevChatRooms) => {
+                    const updatedChatRooms = [...prevChatRooms];
+                    const chatRoomIndex = updatedChatRooms.findIndex(
+                      (room) => room.chatRoomId === chatRoomData.chatRoomId
+                    );
+                    if (chatRoomIndex !== -1) {
+                      updatedChatRooms[chatRoomIndex] = {
+                        ...updatedChatRooms[chatRoomIndex],
+                        messages: updatedChatRoomData.messages,
+                        lastMessage: updatedLastMessage.text,
+                        lastMessageTimestamp: updatedFormattedTime,
+                      };
+                    }
+                    return updatedChatRooms;
+                  });
+                }
+              });
+
+              return {
+                chatRoomId: chatRoomData.chatRoomId,
+                messages: chatRoomData.messages,
+                users: chatRoomData.users,
+                lastMessage: chatRoomData.lastMessage,
+                lastMessageTimestamp: formattedTime,
+              };
+            }
           }
-        }
-
-        const sortedChatRoomsArray = chatRoomsData.sort(function (a, b) {
-          return (
-            new Date(a.lastMessage.createdAt).getTime() -
-            new Date(b.lastMessage.createdAt).getTime()
-          );
+          return null;
         });
 
-        setChatRoomsArray(sortedChatRoomsArray);
+        const chatRoomsData = await Promise.all(promises);
+        const filteredChatRoomsData = chatRoomsData.filter(
+          (chatRoom) => chatRoom !== null
+        );
+        //@ts-ignore
+        setChatRoomsArray(filteredChatRoomsData);
         setLoading(false);
       } catch (error) {
         console.log(error);
         setLoading(false);
       }
     };
+
     fetchChatRooms().then(() => console.log("Fetching chat rooms completed"));
-  }, []);
+  }, [user?.chatRooms, user?.contacts]);
+
   return (
     <ScrollView
       style={styles.screenContainer}
@@ -125,6 +181,7 @@ const ChatsScreen = ({ navigation }: any) => {
           {/* New chat */}
           <Button title="New group" color={"#3396FD"} />
         </View>
+
         <Divider />
         {loading ? (
           <ActivityIndicator style={styles.loading} />
@@ -139,9 +196,9 @@ const ChatsScreen = ({ navigation }: any) => {
           </View>
         ) : (
           <FlatList
-            data={chats}
+            data={chatRoomsArray}
             showsVerticalScrollIndicator={false}
-            renderItem={(item) => <ChatListItem item={item.item} />}
+            renderItem={({ item }) => <ChatListItem item={item} />}
             scrollEnabled={false}
             contentContainerStyle={{
               paddingBottom: 95,
