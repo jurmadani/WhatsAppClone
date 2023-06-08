@@ -32,6 +32,7 @@ import CountriesModal from "../screens/CountriesModal";
 import ImageCache from "../controllers/ImageCache";
 import ContactDetailsScreen from "../screens/ContactDetailsScreen";
 import HeaderLeftAccessory from "../components/ContactDetailsScreenComponents/HeaderLeftAccessory";
+import ContactProfilePictureScreen from "../screens/ContactProfilePictureScreen";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -251,20 +252,31 @@ const StackNavigator = () => {
                     style={{ right: 10 }}
                   />
                 </TouchableOpacity>
-                <ImageCache
-                  uri={route?.params?.imageURL}
-                  height={38}
-                  width={38}
-                  borderRadius={99}
-                  imageType={
-                    route?.params?.firstName +
-                    route?.params?.lastName +
-                    " image from chat screen"
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("ContactProfilePicture", {
+                      contactImageURL: route?.params?.imageURL,
+                    })
                   }
-                />
+                >
+                  <ImageCache
+                    uri={route?.params?.imageURL}
+                    height={38}
+                    width={38}
+                    borderRadius={99}
+                    imageType={
+                      route?.params?.firstName +
+                      route?.params?.lastName +
+                      " image from chat screen"
+                    }
+                  />
+                </TouchableOpacity>
+
                 <TouchableOpacity
                   onPress={() => {
-                    navigation.navigate("ContactDetails");
+                    navigation.navigate("ContactDetails", {
+                      contact: route?.params,
+                    });
                   }}
                 >
                   <View>
@@ -484,10 +496,23 @@ const StackNavigator = () => {
         name="ContactDetails"
         component={ContactDetailsScreen}
         options={({ route }) => {
+          const offsetY = route?.params?.offsetY || 0;
+          const showTitle = offsetY > 56;
           return {
+            headerShadowVisible: showTitle ? true : false,
+            headerStyle: {
+              backgroundColor: showTitle ? "white" : "whitesmoke",
+            },
             headerTitle: "Contact details",
             headerRight: () => <HeaderLeftAccessory />,
           };
+        }}
+      />
+      <Stack.Screen
+        name="ContactProfilePicture"
+        component={ContactProfilePictureScreen}
+        options={{
+          headerTitle: "Contact picture",
         }}
       />
     </Stack.Navigator>

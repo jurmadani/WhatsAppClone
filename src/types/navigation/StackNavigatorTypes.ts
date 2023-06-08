@@ -11,4 +11,5 @@ export type StackNavigatorTypes = {
   ProfilePicture: any;
   ChooseInfo: any;
   ContactDetails: any
+  ContactProfilePicture: any
 };
