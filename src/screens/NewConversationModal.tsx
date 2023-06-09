@@ -28,8 +28,9 @@ const NewConversationModal = ({ route }: any) => {
 
     const fetchContacts = async () => {
       try {
+        const contactsData = [];
         //loop through users contacts list and get the contacts imageURL and info based on uniqueID
-        user?.contacts.forEach(async (contact) => {
+        for (const contact of user?.contacts) {
           const snapshot = await firebase
             .firestore()
             .collection("Users")
@@ -37,25 +38,52 @@ const NewConversationModal = ({ route }: any) => {
             .get();
           const documents = snapshot.docs.map((doc) => doc.data());
           if (documents.length != 0) {
+            const chatRoomsThatUserCurrentlyLoggedInIsIn = await firebase
+              .firestore()
+              .collection("ChatRooms")
+              .where("users", "array-contains", user?.uniqueId)
+              .get();
+            const chatRoomsDocuments =
+              chatRoomsThatUserCurrentlyLoggedInIsIn.docs.map((doc) =>
+                doc.data()
+              );
+            let found = false;
+            chatRoomsDocuments.map((document) => {
+              if (document.users.includes(contact.uniqueId)) {
+                const newContactObject = {
+                  firstName: contact.firstName,
+                  lastName: contact.lastName,
+                  uniqueId: contact.uniqueId,
+                  imageURL: documents[0].imageURL,
+                  info: documents[0].info,
+                  chatRoomId: document.chatRoomId,
+                };
+                contactsData.push(newContactObject);
+                found = true;
+              }
+            });
+            if (!found) {
+              const newContactObject = {
+                firstName: contact.firstName,
+                lastName: contact.lastName,
+                uniqueId: contact.uniqueId,
+                imageURL: documents[0].imageURL,
+                info: documents[0].info,
+                chatRoomId: "",
+              };
+              contactsData.push(newContactObject);
+            }
             //spread the contacts user redux info and add the imageURL to it
-            const newContactObject = {
-              firstName: contact.firstName,
-              lastName: contact.lastName,
-              uniqueId: contact.uniqueId,
-              imageURL: documents[0].imageURL,
-              info: documents[0].info,
-            };
-            setContactsArray((prevContacts) => [
-              ...prevContacts,
-              newContactObject,
-            ]);
           }
-        });
+        }
+        setContactsArray(contactsData);
       } catch (error) {
         console.log(error);
       }
     };
-    fetchContacts();
+    fetchContacts().then(() =>
+      console.log("Done fetching contacts in new conversation modal screen")
+    );
     setLoading(false);
   }, [user?.contacts]);
 
