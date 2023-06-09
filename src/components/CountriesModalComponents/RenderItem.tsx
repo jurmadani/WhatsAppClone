@@ -15,53 +15,26 @@ const RenderItem = ({
 }: RenderItemTypes) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
-  if (searchInput === "") {
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          //setez tara
-          setCountry(item.name);
-          setCountryCode(item.dialling_code);
-          //go back
-          navigation.goBack();
-        }}
-      >
-        <View style={styles.container}>
-          <View style={styles.contentContainer}>
-            <Text style={styles.country}>{item.name}</Text>
-            <Text style={styles.diallingCode}>{item.dialling_code}</Text>
-          </View>
-          <Divider />
+
+  return (
+    <TouchableOpacity
+      onPress={() => {
+        //setez tara
+        setCountry(item.name);
+        setCountryCode(item.dialling_code);
+        //go back
+        navigation.goBack();
+      }}
+    >
+      <View style={styles.container}>
+        <View style={styles.contentContainer}>
+          <Text style={styles.country}>{item.name}</Text>
+          <Text style={styles.diallingCode}>{item.dialling_code}</Text>
         </View>
-      </TouchableOpacity>
-    );
-  } else {
-    const lowercasedInput = searchInput.toLowerCase();
-    const lowercasedName = item.name.toLowerCase();
-    if (lowercasedName.includes(lowercasedInput)) {
-      return (
-        <TouchableOpacity
-          onPress={() => {
-            //setez tara
-            setCountry(item.name);
-            setCountryCode(item.dialling_code);
-            //go back
-            navigation.goBack();
-          }}
-        >
-          <View style={styles.container}>
-            <View style={styles.contentContainer}>
-              <Text style={styles.country}>{item.name}</Text>
-              <Text style={styles.diallingCode}>{item.dialling_code}</Text>
-            </View>
-            <Divider />
-          </View>
-        </TouchableOpacity>
-      );
-    } else {
-      return <View></View>;
-    }
-  }
+        <Divider />
+      </View>
+    </TouchableOpacity>
+  );
 };
 
 export default RenderItem;

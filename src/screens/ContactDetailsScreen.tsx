@@ -16,10 +16,13 @@ import ContactActions from "../components/ContactDetailsScreenComponents/Contact
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
+import { userSliceType } from "../types/redux/sliceTypes";
+import { useSelector } from "react-redux";
 
 const ContactDetailsScreen = ({ navigation, route }: any) => {
   const navigationHook =
     useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
+  const user: userSliceType = useSelector((state: any) => state.user.user);
   const [contact, setContact] = useState<IContact>(route?.params?.contact);
   const scrollViewRef = useRef(null);
   const [offsetY, setOffsetY] = useState(0);
@@ -57,16 +60,27 @@ const ContactDetailsScreen = ({ navigation, route }: any) => {
         .where("uniqueId", "==", contact.otherUserUniqueId)
         .get();
       const data = snapshot.docs.map((doc) => doc.data());
-      setContact({
-        ...contact,
-        phoneNumber: data[0].phoneNumber,
-        country: data[0].country,
-        countryCode: data[0].countryCode,
-        info: data[0].info,
-      });
+      if (data.length > 0) {
+        const currentContactInformation = user.contacts.filter(
+          (contactObj) => contactObj.uniqueId === contact.otherUserUniqueId
+        );
+        setContact({
+          ...contact,
+          phoneNumber: data[0]?.phoneNumber,
+          country: data[0]?.country,
+          countryCode: data[0]?.countryCode,
+          info: data[0]?.info,
+          firstName: currentContactInformation[0]?.firstName,
+          lastName: currentContactInformation[0]?.lastName,
+        });
+      }
     };
     fetchContactPhoneNumber();
-  }, [offsetY]);
+  }, [offsetY, user?.contacts]);
+
+  useEffect(() => {
+    navigation.setParams({ contact });
+  }, [contact]);
 
   return (
     <ScrollView
@@ -105,8 +119,8 @@ const ContactDetailsScreen = ({ navigation, route }: any) => {
       </Text>
       {/* Buttons view */}
       <View style={styles.buttonsView}>
-        {buttons.map((button) => (
-          <ActionButton title={button.title} icon={button.icon} />
+        {buttons.map((button, index) => (
+          <ActionButton title={button.title} icon={button.icon} index={index} />
         ))}
       </View>
       {/* Status */}

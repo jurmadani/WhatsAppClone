@@ -132,9 +132,15 @@ const InputBox = ({
         onChangeText={(text) => setMessage(text)}
       />
       {/* Icon */}
-      <TouchableOpacity onPress={handleSendMessage}>
+      <TouchableOpacity
+        onPress={handleSendMessage}
+        disabled={message === "" ? true : false}
+      >
         <MaterialIcons
-          style={styles.send}
+          style={[
+            styles.send,
+            { backgroundColor: message === "" ? "#92C2F5" : "#007AFF" },
+          ]}
           name="send"
           color={"white"}
           size={18}
@@ -166,7 +172,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   send: {
-    backgroundColor: "#007AFF",
     padding: 7,
     borderRadius: 17,
     overflow: "hidden",

@@ -17,7 +17,7 @@ import SignupScreen from "../screens/SignupScreen";
 import { useState, useEffect } from "react";
 import { handleSignInWithPhoneNumber } from "../controllers/handleSignInWithPhoneNumber";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import EditProfileScreen from "../screens/EditProfileScreen";
 import ProfilePictureScreen from "../screens/ProfilePictureScreen";
 import EditButton from "../components/ProfilePictureScreenComponents/EditButton";
@@ -33,6 +33,10 @@ import ImageCache from "../controllers/ImageCache";
 import ContactDetailsScreen from "../screens/ContactDetailsScreen";
 import HeaderLeftAccessory from "../components/ContactDetailsScreenComponents/HeaderLeftAccessory";
 import ContactProfilePictureScreen from "../screens/ContactProfilePictureScreen";
+import EditContactModal from "../screens/EditContactModal";
+import SaveEditedContactButton from "../components/EditContactModalComponents/SaveEditedContactButton";
+import { userSliceType } from "../types/redux/sliceTypes";
+import { IContact } from "../types/ContactDetailsScreenComponentTypes/ContactDetailsScreenTypes";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -195,6 +199,7 @@ const StackNavigator = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
   const dispatch = useDispatch();
+  const user: userSliceType = useSelector((state: any) => state.user.user);
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -275,7 +280,11 @@ const StackNavigator = () => {
                 <TouchableOpacity
                   onPress={() => {
                     navigation.navigate("ContactDetails", {
-                      contact: route?.params,
+                      contact: {
+                        chatRoomId: route?.params?.chatRoomId,
+                        imageURL: route?.params?.imageURL,
+                        otherUserUniqueId: route?.params?.otherUserUniqueId,
+                      },
                     });
                   }}
                 >
@@ -504,7 +513,9 @@ const StackNavigator = () => {
               backgroundColor: showTitle ? "white" : "whitesmoke",
             },
             headerTitle: "Contact details",
-            headerRight: () => <HeaderLeftAccessory />,
+            headerRight: () => (
+              <HeaderLeftAccessory contact={route?.params?.contact} />
+            ),
           };
         }}
       />
@@ -513,6 +524,34 @@ const StackNavigator = () => {
         component={ContactProfilePictureScreen}
         options={{
           headerTitle: "Contact picture",
+        }}
+      />
+      <Stack.Screen
+        name="EditContactModal"
+        component={EditContactModal}
+        options={({ route }) => {
+          const offsetY = route?.params?.offsetY || 0;
+          const showTitle = offsetY > 0;
+          return {
+            presentation: "modal",
+            headerShadowVisible: showTitle ? true : false,
+            headerStyle: {
+              backgroundColor: showTitle ? "white" : "whitesmoke",
+            },
+            headerTitle: "Edit contact",
+            headerRight: () => (
+              <SaveEditedContactButton
+                contactCanBeEdited={route?.params?.contactCanBeEdited}
+                phoneNumber={route?.params?.phoneNumber}
+                country={route?.params?.country}
+                countryCode={route?.params?.countryCode}
+                firstName={route?.params?.firstName}
+                lastName={route?.params?.lastName}
+                contactUniqueId={route?.params?.contactUniqueId}
+              />
+            ),
+            headerLeft: () => <CancelButton />,
+          };
         }}
       />
     </Stack.Navigator>

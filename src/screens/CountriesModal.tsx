@@ -12,15 +12,32 @@ const CountriesModal = ({ navigation, route }: any) => {
     <View style={styles.container}>
       <FlatList
         data={countries}
-        renderItem={({ item, index }) => (
-          <RenderItem
-            searchInput={searchInput}
-            item={item}
-            index={index}
-            setCountry={route?.params?.setCountry}
-            setCountryCode={route?.params?.setCountryCode}
-          />
-        )}
+        //@ts-expect-error
+        renderItem={({ item, index }) => {
+          if (searchInput === "")
+            return (
+              <RenderItem
+                searchInput={searchInput}
+                item={item}
+                index={index}
+                setCountry={route?.params?.setCountry}
+                setCountryCode={route?.params?.setCountryCode}
+              />
+            );
+          else if (
+            item.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+            item.name.toLowerCase().includes(searchInput.toLowerCase())
+          )
+            return (
+              <RenderItem
+                searchInput={searchInput}
+                item={item}
+                index={index}
+                setCountry={route?.params?.setCountry}
+                setCountryCode={route?.params?.setCountryCode}
+              />
+            );
+        }}
       />
     </View>
   );

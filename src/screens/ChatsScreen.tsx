@@ -19,12 +19,17 @@ import { IChatRooms, userSliceType } from "../types/redux/sliceTypes";
 import { useSelector } from "react-redux";
 import { firebase } from "../../backend/firebase";
 import ToastNotification from "../controllers/ToastNotification";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
 
 export interface IChatRoomsExtended extends IChatRooms {
   lastMessageTimestamp: string;
 }
 
 const ChatsScreen = ({ navigation }: any) => {
+  const navigationHook =
+    useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
   const [chatRoomsArray, setChatRoomsArray] = useState<IChatRoomsExtended[]>(
     []
   );
@@ -177,7 +182,12 @@ const ChatsScreen = ({ navigation }: any) => {
           ]}
         >
           {/* My contacts */}
-          <Button title="My contacts" color={"#3396FD"} />
+          <Button
+            title="My contacts"
+            color={"#3396FD"}
+            //@ts-expect-error
+            onPress={() => navigationHook.navigate("Contacts")}
+          />
           {/* New chat */}
           <Button title="New group" color={"#3396FD"} />
         </View>

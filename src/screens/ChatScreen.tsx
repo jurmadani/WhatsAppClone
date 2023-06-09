@@ -23,7 +23,7 @@ const ChatScreen = ({ route }: any) => {
   const [usersDidChatBefore, setDidUsersChatBefore] = useState(false);
   const [messagesArray, setMessagesArray] = useState<IMessage[]>([]);
   const [chatRoom, setChatRoom] = useState<IChatRooms>();
-
+  console.log(chatRoom)
   const fetchMessages = async () => {
     if (chatRoomId != "")
       try {

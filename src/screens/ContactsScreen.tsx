@@ -103,7 +103,7 @@ const ContactsScreen = ({ navigation }: any) => {
     };
 
     fetchContacts().then(() => console.log("Done fetching contacts"));
-  }, [user?.contacts, user?.chatRooms]);
+  }, [user?.contacts]);
 
   return (
     <ScrollView
@@ -188,7 +188,7 @@ const ContactsScreen = ({ navigation }: any) => {
                   letterChanged = true;
 
               return (
-                <Contact
+                <Cont act
                   index={index}
                   item={item}
                   didLetterChange={letterChanged}

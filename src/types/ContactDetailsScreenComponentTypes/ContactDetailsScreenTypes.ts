@@ -13,6 +13,7 @@ export interface IContact {
 export interface IActionButton {
     title: string;
     icon: string;
+    index?: number
 }
 
 export interface IStatusCard {
@@ -24,4 +25,24 @@ export interface IContactActions {
 }
 export interface IContactProfilePictureScreen {
     contactImageURL: string;
+}
+
+export interface IHeaderLeftAccessory {
+    contact: {
+        chatRoomId: string;
+        firstName: string;
+        lastName: string;
+        imageURL: string;
+        otherUserUniqueId: string;
+    }
+}
+
+export interface ISaveEditedContactButton {
+    contactCanBeEdited: boolean;
+    phoneNumber: string;
+    country: string;
+    countryCode: string;
+    firstName: string;
+    lastName: string
+    contactUniqueId: string
 }
