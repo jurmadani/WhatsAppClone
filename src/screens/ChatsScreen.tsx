@@ -25,6 +25,7 @@ import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
 
 export interface IChatRoomsExtended extends IChatRooms {
   lastMessageTimestamp: string;
+  lastMessageSenderUniqueId: string;
 }
 
 const ChatsScreen = ({ navigation }: any) => {
@@ -71,15 +72,39 @@ const ChatsScreen = ({ navigation }: any) => {
             if (chatRoomData) {
               const lastMessageIndex = chatRoomData.messages.length - 1;
               const lastMessage = chatRoomData.messages[lastMessageIndex];
+              const lastMessageSenderUniqueId = lastMessage.senderUniqueId;
               const lastMessageCreatedAt = lastMessage.createdAt.toDate();
-              const formattedTime = lastMessageCreatedAt.toLocaleTimeString(
-                [],
-                {
+              const currentDate = new Date();
+              const timeDifference =
+                currentDate.getTime() - lastMessageCreatedAt.getTime();
+              let formattedTime;
+
+              if (timeDifference < 86400000) {
+                // Less than 24 hours
+                formattedTime = lastMessageCreatedAt.toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
-                }
-              );
-
+                });
+              } else if (timeDifference < 172800000) {
+                // Less than 48 hours (2 days)
+                formattedTime = "Yesterday";
+              } else if (timeDifference < 604800000) {
+                // Less than 7 days (1 week)
+                formattedTime = lastMessageCreatedAt.toLocaleDateString([], {
+                  weekday: "long",
+                });
+              } else {
+                // Older than a week
+                formattedTime = lastMessageCreatedAt.toLocaleDateString([], {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                });
+              }
+              // Remove the date part from formattedTime if it contains a comma
+              if (formattedTime.includes(",")) {
+                formattedTime = formattedTime.split(",")[0].trim();
+              }
               // Add a listener to the chat room document to listen for changes
               chatRoomRef.onSnapshot((snapshot) => {
                 const updatedChatRoomData = snapshot.data();
@@ -88,14 +113,48 @@ const ChatsScreen = ({ navigation }: any) => {
                     updatedChatRoomData.messages.length - 1;
                   const updatedLastMessage =
                     updatedChatRoomData.messages[updatedLastMessageIndex];
+                  const updatedLastMessageSenderUniqueId =
+                    updatedChatRoomData.messages[updatedLastMessageIndex]
+                      .senderUniqueId;
                   const updatedLastMessageCreatedAt =
                     updatedLastMessage.createdAt.toDate();
-                  const updatedFormattedTime =
-                    updatedLastMessageCreatedAt.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    });
 
+                  const currentDate = new Date();
+                  const updatedTimeDifference =
+                    currentDate.getTime() -
+                    updatedLastMessageCreatedAt.getTime();
+                  let updatedFormattedTime: string;
+
+                  if (updatedTimeDifference < 86400000) {
+                    // Less than 24 hours
+                    updatedFormattedTime =
+                      updatedLastMessageCreatedAt.toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      });
+                  } else if (updatedTimeDifference < 172800000) {
+                    // Less than 48 hours (2 days)
+                    updatedFormattedTime = "Yesterday";
+                  } else if (updatedTimeDifference < 604800000) {
+                    // Less than 7 days (1 week)
+                    updatedFormattedTime =
+                      updatedLastMessageCreatedAt.toLocaleDateString([], {
+                        weekday: "long",
+                      });
+                  } else {
+                    // Older than a week
+                    updatedFormattedTime =
+                      updatedLastMessageCreatedAt.toLocaleDateString([], {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      });
+                  }
+                  if (updatedFormattedTime.includes(",")) {
+                    updatedFormattedTime = updatedFormattedTime
+                      .split(",")[0]
+                      .trim();
+                  }
                   // Update the chat room data in the state with the updated last message and formatted time
                   setChatRoomsArray((prevChatRooms) => {
                     const updatedChatRooms = [...prevChatRooms];
@@ -108,6 +167,8 @@ const ChatsScreen = ({ navigation }: any) => {
                         messages: updatedChatRoomData.messages,
                         lastMessage: updatedLastMessage.text,
                         lastMessageTimestamp: updatedFormattedTime,
+                        lastMessageSenderUniqueId:
+                          updatedLastMessageSenderUniqueId,
                       };
                     }
                     return updatedChatRooms;
@@ -121,6 +182,7 @@ const ChatsScreen = ({ navigation }: any) => {
                 users: chatRoomData.users,
                 lastMessage: chatRoomData.lastMessage,
                 lastMessageTimestamp: formattedTime,
+                lastMessageSenderUniqueId: lastMessageSenderUniqueId,
               };
             }
           }

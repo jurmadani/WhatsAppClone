@@ -1,4 +1,5 @@
 backend/
+dummy-test-data/
 node_modules/
 .expo/
 dist/

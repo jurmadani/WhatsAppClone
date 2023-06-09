@@ -24,6 +24,9 @@ const ChatListItem = ({ item }: ChatListItem) => {
     //@ts-ignore
     (state) => state.user.user
   );
+  const isMyMessage = () => {
+    return item.lastMessageSenderUniqueId === user.uniqueId;
+  };
   const [otherUser, setOtherUser] = useState<userSliceType>();
   const [otherUserAsContactInfo, setOtherUserAsContact] = useState<IContacts>();
   const navigation =
@@ -95,9 +98,22 @@ const ChatListItem = ({ item }: ChatListItem) => {
           {otherUserAsContactInfo === undefined && (
             <Text style={styles.username}>{otherUser?.fullName}</Text>
           )}
-
-          {/* Message */}
-          <Text style={styles.lastMessage}>{item.lastMessage}</Text>
+          <View style={styles.lastMessageView}>
+            {isMyMessage() && (
+              <Image
+                source={require("../../../assets/icons/doubleTick.png")}
+                style={styles.icon}
+              />
+            )}
+            {/* Message */}
+            {item?.lastMessage?.length > 49 ? (
+              <Text style={styles.lastMessage}>
+                {item?.lastMessage?.slice(0, 49)}...
+              </Text>
+            ) : (
+              <Text style={styles.lastMessage}>{item?.lastMessage}</Text>
+            )}
+          </View>
         </View>
 
         {/* Timestamp */}
@@ -123,8 +139,8 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
   lastMessage: {
-    color:'grey',
-    width: windowWidth - 130,
+    color: "grey",
+    maxWidth: windowWidth - 180,
     paddingTop: 3,
   },
   divider: {
@@ -134,6 +150,18 @@ const styles = StyleSheet.create({
     right: 5,
     opacity: 0.4,
     fontSize: 15,
+    flex: 1,
+    textAlign: "right",
+  },
+  icon: {
+    height: 16,
+    width: 16,
+    marginRight:5,
+    tintColor: "#3396FD",
+  },
+  lastMessageView: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
 
