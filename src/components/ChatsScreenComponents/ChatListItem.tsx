@@ -17,9 +17,10 @@ import ImageCache from "../../controllers/ImageCache";
 import { IChatRoomsExtended } from "../../screens/ChatsScreen";
 type ChatListItem = {
   item: IChatRoomsExtended;
+  searchInput: string;
 };
 
-const ChatListItem = ({ item }: ChatListItem) => {
+const ChatListItem = ({ item, searchInput }: ChatListItem) => {
   const user: userSliceType = useSelector(
     //@ts-ignore
     (state) => state.user.user
@@ -56,72 +57,148 @@ const ChatListItem = ({ item }: ChatListItem) => {
     };
     fetchChatRoomData();
   }, []);
-  return (
-    <TouchableOpacity
-      onPress={() => {
-        navigation.navigate("ChatScreen", {
-          firstName:
-            otherUserAsContactInfo !== undefined
-              ? otherUserAsContactInfo?.firstName
-              : otherUser?.fullName,
-          lastName:
-            otherUserAsContactInfo !== undefined
-              ? otherUserAsContactInfo?.lastName
-              : "",
-          otherUserUniqueId: otherUserAsContactInfo?.uniqueId,
-          imageURL: otherUser?.imageURL,
-          chatRoomId: item?.chatRoomId,
-        });
-      }}
-    >
-      <View style={styles.container}>
-        {/* User avatar */}
-        <ImageCache
-          //@ts-ignore
-          uri={otherUser?.imageURL}
-          height={60}
-          width={60}
-          borderRadius={99}
-          imageType={
-            otherUser?.fullName +
-            " image from chat list item inside the chats screen"
-          }
-        />
-        <View style={styles.userInfo}>
-          {/* User username */}
-          {otherUserAsContactInfo != undefined && (
-            <Text style={styles.username}>
-              {otherUserAsContactInfo?.firstName}{" "}
-              {otherUserAsContactInfo?.lastName}
-            </Text>
-          )}
-          {otherUserAsContactInfo === undefined && (
-            <Text style={styles.username}>{otherUser?.fullName}</Text>
-          )}
-          <View style={styles.lastMessageView}>
-            {isMyMessage() && (
-              <Image
-                source={require("../../../assets/icons/doubleTick.png")}
-                style={styles.icon}
-              />
-            )}
-            {/* Message */}
-            {item?.lastMessage?.length > 49 ? (
-              <Text style={styles.lastMessage}>
-                {item?.lastMessage?.slice(0, 49)}...
+  if (searchInput === "")
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("ChatScreen", {
+            firstName:
+              otherUserAsContactInfo !== undefined
+                ? otherUserAsContactInfo?.firstName
+                : otherUser?.fullName,
+            lastName:
+              otherUserAsContactInfo !== undefined
+                ? otherUserAsContactInfo?.lastName
+                : "",
+            otherUserUniqueId: otherUserAsContactInfo?.uniqueId,
+            imageURL: otherUser?.imageURL,
+            chatRoomId: item?.chatRoomId,
+          });
+        }}
+      >
+        <View style={styles.container}>
+          {/* User avatar */}
+          <ImageCache
+            //@ts-ignore
+            uri={otherUser?.imageURL}
+            height={60}
+            width={60}
+            borderRadius={99}
+            imageType={
+              otherUser?.fullName +
+              " image from chat list item inside the chats screen"
+            }
+          />
+          <View style={styles.userInfo}>
+            {/* User username */}
+            {otherUserAsContactInfo != undefined && (
+              <Text style={styles.username}>
+                {otherUserAsContactInfo?.firstName}{" "}
+                {otherUserAsContactInfo?.lastName}
               </Text>
-            ) : (
-              <Text style={styles.lastMessage}>{item?.lastMessage}</Text>
             )}
+            {otherUserAsContactInfo === undefined && (
+              <Text style={styles.username}>{otherUser?.fullName}</Text>
+            )}
+            <View style={styles.lastMessageView}>
+              {isMyMessage() && (
+                <Image
+                  source={require("../../../assets/icons/doubleTick.png")}
+                  style={styles.icon}
+                />
+              )}
+              {/* Message */}
+              {item?.lastMessage?.length > 49 ? (
+                <Text style={styles.lastMessage}>
+                  {item?.lastMessage?.slice(0, 49)}...
+                </Text>
+              ) : (
+                <Text style={styles.lastMessage}>{item?.lastMessage}</Text>
+              )}
+            </View>
           </View>
-        </View>
 
-        {/* Timestamp */}
-        <Text style={styles.timestamp}>{item.lastMessageTimestamp}</Text>
-      </View>
-      <Divider style={styles.divider} />
-    </TouchableOpacity>
-  );
+          {/* Timestamp */}
+          <Text style={styles.timestamp}>{item.lastMessageTimestamp}</Text>
+        </View>
+        <Divider style={styles.divider} />
+      </TouchableOpacity>
+    );
+  else if (
+    otherUserAsContactInfo?.lastName
+      .toLowerCase()
+      .includes(searchInput.toLowerCase()) ||
+    otherUserAsContactInfo?.firstName
+      .toLowerCase()
+      .includes(searchInput.toLowerCase())
+  )
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("ChatScreen", {
+            firstName:
+              otherUserAsContactInfo !== undefined
+                ? otherUserAsContactInfo?.firstName
+                : otherUser?.fullName,
+            lastName:
+              otherUserAsContactInfo !== undefined
+                ? otherUserAsContactInfo?.lastName
+                : "",
+            otherUserUniqueId: otherUserAsContactInfo?.uniqueId,
+            imageURL: otherUser?.imageURL,
+            chatRoomId: item?.chatRoomId,
+          });
+        }}
+      >
+        <View style={styles.container}>
+          {/* User avatar */}
+          <ImageCache
+            //@ts-ignore
+            uri={otherUser?.imageURL}
+            height={60}
+            width={60}
+            borderRadius={99}
+            imageType={
+              otherUser?.fullName +
+              " image from chat list item inside the chats screen"
+            }
+          />
+          <View style={styles.userInfo}>
+            {/* User username */}
+            {otherUserAsContactInfo != undefined && (
+              <Text style={styles.username}>
+                {otherUserAsContactInfo?.firstName}{" "}
+                {otherUserAsContactInfo?.lastName}
+              </Text>
+            )}
+            {otherUserAsContactInfo === undefined && (
+              <Text style={styles.username}>{otherUser?.fullName}</Text>
+            )}
+            <View style={styles.lastMessageView}>
+              {isMyMessage() && (
+                <Image
+                  source={require("../../../assets/icons/doubleTick.png")}
+                  style={styles.icon}
+                />
+              )}
+              {/* Message */}
+              {item?.lastMessage?.length > 49 ? (
+                <Text style={styles.lastMessage}>
+                  {item?.lastMessage?.slice(0, 49)}...
+                </Text>
+              ) : (
+                <Text style={styles.lastMessage}>{item?.lastMessage}</Text>
+              )}
+            </View>
+          </View>
+
+          {/* Timestamp */}
+          <Text style={styles.timestamp}>{item.lastMessageTimestamp}</Text>
+        </View>
+        <Divider style={styles.divider} />
+      </TouchableOpacity>
+    );
+  else return <View></View>;
 };
 
 const styles = StyleSheet.create({
@@ -156,7 +233,7 @@ const styles = StyleSheet.create({
   icon: {
     height: 16,
     width: 16,
-    marginRight:5,
+    marginRight: 5,
     tintColor: "#3396FD",
   },
   lastMessageView: {

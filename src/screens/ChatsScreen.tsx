@@ -25,6 +25,7 @@ import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
 
 export interface IChatRoomsExtended extends IChatRooms {
   lastMessageTimestamp: string;
+  lastMessageCreatedAt: string;
   lastMessageSenderUniqueId: string;
 }
 
@@ -35,7 +36,7 @@ const ChatsScreen = ({ navigation }: any) => {
     []
   );
   const [loading, setLoading] = useState(false);
-
+  const [searchInput, setSearchInput] = useState("");
   const user: userSliceType = useSelector(
     //@ts-ignore
     (state) => state.user.user
@@ -166,6 +167,8 @@ const ChatsScreen = ({ navigation }: any) => {
                         ...updatedChatRooms[chatRoomIndex],
                         messages: updatedChatRoomData.messages,
                         lastMessage: updatedLastMessage.text,
+                        lastMessageCreatedAt:
+                          updatedLastMessageCreatedAt.getTime(),
                         lastMessageTimestamp: updatedFormattedTime,
                         lastMessageSenderUniqueId:
                           updatedLastMessageSenderUniqueId,
@@ -181,6 +184,7 @@ const ChatsScreen = ({ navigation }: any) => {
                 messages: chatRoomData.messages,
                 users: chatRoomData.users,
                 lastMessage: chatRoomData.lastMessage,
+                lastMessageCreatedAt: lastMessageCreatedAt.getTime(),
                 lastMessageTimestamp: formattedTime,
                 lastMessageSenderUniqueId: lastMessageSenderUniqueId,
               };
@@ -202,7 +206,7 @@ const ChatsScreen = ({ navigation }: any) => {
       }
     };
 
-    fetchChatRooms().then(() => console.log("Fetching chat rooms completed"));
+    fetchChatRooms().then(() => console.log("Fetching chat rooms done"));
   }, [user?.chatRooms, user?.contacts]);
 
   return (
@@ -221,6 +225,8 @@ const ChatsScreen = ({ navigation }: any) => {
           <SearchBar
             //@ts-ignore
             platform={Platform.OS === "ios" ? "ios" : "android"}
+            value={searchInput}
+            onChangeText={(text) => setSearchInput(text)}
             inputContainerStyle={[
               styles.inputContainerStyle,
               {
@@ -268,9 +274,15 @@ const ChatsScreen = ({ navigation }: any) => {
           </View>
         ) : (
           <FlatList
-            data={chatRoomsArray}
+            data={chatRoomsArray.sort(
+              (chatRoomA, chatRoomB) =>
+                new Date(chatRoomB.lastMessageCreatedAt).getTime() -
+                new Date(chatRoomA.lastMessageCreatedAt).getTime()
+            )}
             showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => <ChatListItem item={item} />}
+            renderItem={({ item }) => (
+              <ChatListItem item={item} searchInput={searchInput} />
+            )}
             scrollEnabled={false}
             contentContainerStyle={{
               paddingBottom: 95,
