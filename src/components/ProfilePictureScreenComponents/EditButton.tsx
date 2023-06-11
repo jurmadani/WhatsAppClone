@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   ActionSheetIOS,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { userSlice } from "../../redux/userSlice";
@@ -16,6 +16,8 @@ import { StackNavigatorTypes } from "../../types/navigation/StackNavigatorTypes"
 import ChangingPictureModal from "./ChangingPictureModal";
 import { firebase } from "../../../backend/firebase";
 import { userSliceType } from "../../types/redux/sliceTypes";
+import { defaultImageURL } from "../../constants/DefaultImage";
+import { Camera, CameraType } from "expo-camera";
 
 const EditButton = () => {
   const navigation =
@@ -25,8 +27,12 @@ const EditButton = () => {
     (state) => state.user.user
   );
   const dispatch = useDispatch();
+  const [hasCameraPermission, setHasCameraPermission] = useState(false);
+  const [type, setType] = useState(CameraType.back);
+  const [flash, setFlash] = useState(Camera.Constants.FlashMode[1]);
   const [modalLoading, setModalLoading] = useState(false);
-  const AddNewProfilePhoto = async () => {
+
+  const addNewProfilePhoto = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -64,10 +70,40 @@ const EditButton = () => {
         userSlice.actions.updateUserGlobalStateImageURL({ imageURL: url })
       );
       setModalLoading(false);
-      console.log('User profile picture added to firebase storage & updated firestore')
+      console.log(
+        "User profile picture added to firebase storage & updated firestore"
+      );
       //navigate back
       navigation.goBack();
     }
+  };
+  const deleteProfilePhoto = async () => {
+    setModalLoading(true);
+    //update firestore
+    await firebase
+      .firestore()
+      .collection("Users")
+      .doc(user?.uniqueId)
+      .update({
+        imageURL: defaultImageURL,
+      })
+      .then(() => {
+        //update redux global state
+        dispatch(
+          userSlice.actions.updateUserGlobalStateImageURL({
+            imageURL: defaultImageURL,
+          })
+        );
+        setModalLoading(false);
+        console.log("User profile picture deleted.");
+        navigation.goBack();
+      });
+  };
+
+  const takePhoto = async () => {
+    const cameraStatus = await Camera.requestCameraPermissionsAsync();
+    setHasCameraPermission(cameraStatus.status === "granted");
+    if (cameraStatus) navigation.navigate("TakePhoto");
   };
 
   const onPress = () =>
@@ -81,8 +117,11 @@ const EditButton = () => {
         if (buttonIndex === 0) {
           // cancel action
         } else if (buttonIndex === 1) {
+          await deleteProfilePhoto();
         } else if (buttonIndex === 2) {
-          await AddNewProfilePhoto();
+          await addNewProfilePhoto();
+        } else if (buttonIndex === 3) {
+          await takePhoto();
         }
       }
     );

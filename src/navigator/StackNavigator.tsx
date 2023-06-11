@@ -37,6 +37,8 @@ import EditContactModal from "../screens/EditContactModal";
 import SaveEditedContactButton from "../components/EditContactModalComponents/SaveEditedContactButton";
 import { userSliceType } from "../types/redux/sliceTypes";
 import { IContact } from "../types/ContactDetailsScreenComponentTypes/ContactDetailsScreenTypes";
+import TakePhotoScreen from "../screens/TakePhotoScreen";
+import SetFlashButton from "../components/TakePhotoModalComponents/SetFlashButton";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -551,6 +553,25 @@ const StackNavigator = () => {
               />
             ),
             headerLeft: () => <CancelButton />,
+          };
+        }}
+      />
+      <Stack.Screen
+        name="TakePhoto"
+        component={TakePhotoScreen}
+        options={({ route }) => {
+          return {
+            presentation: "fullScreenModal",
+            headerStyle: {
+              backgroundColor: "black",
+            },
+            headerLeft: () => (
+              <SetFlashButton
+                flash={route?.params?.flash}
+                setFlash={route?.params?.setFlash}
+              />
+            ),
+            title: "",
           };
         }}
       />

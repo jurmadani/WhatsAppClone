@@ -13,4 +13,5 @@ export type StackNavigatorTypes = {
   ContactDetails: any
   ContactProfilePicture: any
   EditContactModal: any
+  TakePhoto: any
 };
