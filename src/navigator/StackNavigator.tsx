@@ -565,12 +565,13 @@ const StackNavigator = () => {
             headerStyle: {
               backgroundColor: "black",
             },
-            headerLeft: () => (
-              <SetFlashButton
-                flash={route?.params?.flash}
-                setFlash={route?.params?.setFlash}
-              />
-            ),
+            headerLeft: () =>
+              route?.params?.image === null && (
+                <SetFlashButton
+                  flash={route?.params?.flash}
+                  setFlash={route?.params?.setFlash}
+                />
+              ),
             title: "",
           };
         }}
