@@ -4,6 +4,8 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  ActionSheetIOS,
+  Image,
 } from "react-native";
 import React, { useState } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -13,6 +15,11 @@ import { firebase } from "../../../backend/firebase";
 import { userSliceType } from "../../types/redux/sliceTypes";
 import { useDispatch, useSelector } from "react-redux";
 import { userSlice } from "../../redux/userSlice";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackNavigatorTypes } from "../../types/navigation/StackNavigatorTypes";
+import { Camera } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 
 const InputBox = ({
   usersDidChatBefore,
@@ -23,12 +30,11 @@ const InputBox = ({
   messagesArray,
 }: InputBoxTypes) => {
   const user: userSliceType = useSelector((state: any) => state.user.user);
+  const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
-  /*
-    if user chatted before is false => then first message will create a new doc in firestore
-    then we need to update redux
-  */
+  const navigation =
+    useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
   const handleSendMessage = async () => {
     if (usersDidChatBefore === false) {
       //create a new chat room doc in firestore
@@ -120,10 +126,57 @@ const InputBox = ({
       setMessage("");
     }
   };
+
+  const sendPhotoTakenFromCamera = async () => {
+    const cameraStatus = await Camera.requestCameraPermissionsAsync();
+    setHasCameraPermission(cameraStatus.status === "granted");
+    if (cameraStatus)
+      navigation.navigate("TakePhotoChatScreen", {
+        receiverUniqueId: otherUserUniqueId,
+      });
+  };
+
+  const sendPhotoFromMediaLibrary = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      //navigate back
+      navigation.navigate("TakePhotoChatScreen", {
+        receiverUniqueId: otherUserUniqueId,
+        image: result.assets[0].uri,
+      });
+    }
+  };
+  const chooseMediaTypeActionSheet = () => {
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: ["Cancel", "Photo camera", "Media library"],
+        cancelButtonIndex: 0,
+      },
+      async (buttonIndex) => {
+        if (buttonIndex === 0) {
+          //cancel: do nothing
+        } else if (buttonIndex === 1) {
+          await sendPhotoTakenFromCamera();
+        } else if (buttonIndex === 2) {
+          await sendPhotoFromMediaLibrary();
+        }
+      }
+    );
+  };
+
   return (
     <View style={styles.container}>
       {/* Icon */}
-      <AntDesign name="plus" size={27} color={"#007AFF"} />
+      <TouchableOpacity onPress={() => chooseMediaTypeActionSheet()}>
+        <AntDesign name="plus" size={27} color={"#007AFF"} />
+      </TouchableOpacity>
+
       {/* Text input */}
       <TextInput
         placeholder="type your message..."

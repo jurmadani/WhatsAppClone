@@ -39,6 +39,7 @@ import { userSliceType } from "../types/redux/sliceTypes";
 import { IContact } from "../types/ContactDetailsScreenComponentTypes/ContactDetailsScreenTypes";
 import TakePhotoScreen from "../screens/TakePhotoScreen";
 import SetFlashButton from "../components/TakePhotoModalComponents/SetFlashButton";
+import TakePhotoScreenForChat from "../screens/TakePhotoScreenForChat";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -573,6 +574,16 @@ const StackNavigator = () => {
                 />
               ),
             title: "",
+          };
+        }}
+      />
+      <Stack.Screen
+        name="TakePhotoChatScreen"
+        component={TakePhotoScreenForChat}
+        options={({ route }) => {
+          return {
+            presentation: "fullScreenModal",
+            headerShown:'false',
           };
         }}
       />

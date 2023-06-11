@@ -28,8 +28,6 @@ const EditButton = () => {
   );
   const dispatch = useDispatch();
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
-  const [type, setType] = useState(CameraType.back);
-  const [flash, setFlash] = useState(Camera.Constants.FlashMode[1]);
   const [modalLoading, setModalLoading] = useState(false);
 
   const addNewProfilePhoto = async () => {
