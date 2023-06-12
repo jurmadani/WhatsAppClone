@@ -5,6 +5,8 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { userSliceType } from "../../types/redux/sliceTypes";
 import { useSelector } from "react-redux";
 import { MessageType } from "../../types/ChatScreenComponentTypes/MessageType";
+import { windowHeight, windowWidth } from "../../constants/Dimensions";
+import ImageCache from "../../controllers/ImageCache";
 
 const Message = ({ item, index }: MessageType) => {
   const user: userSliceType = useSelector((state: any) => state.user.user);
@@ -19,23 +21,51 @@ const Message = ({ item, index }: MessageType) => {
         {
           backgroundColor: isMyMessage() ? "#DCF7C5" : "white",
           alignSelf: isMyMessage() ? "flex-end" : "flex-start",
+          padding: item?.image !== undefined ? 0 : 10,
         },
       ]}
     >
       {/* Messages */}
-      <Text style={styles.message}>{item.text}</Text>
-      {/* Timestamp and tick status */}
-      <View style={styles.timestampView}>
-        <Text style={styles.time}>
-          {new Date(item.createdAt.toDate()).toLocaleTimeString().slice(0, 5)}
-        </Text>
-        {isMyMessage() && (
-          <Image
-            source={require("../../../assets/icons/doubleTick.png")}
-            style={styles.icon}
-          />
-        )}
-      </View>
+      {item?.image !== undefined ? (
+        <ImageCache
+          uri={item.image}
+          height={windowHeight / 3.5}
+          width={windowWidth - 150}
+          marginTop={5}
+          borderRadius={10}
+          imageType="image sent as message"
+        />
+      ) : (
+        <Text style={styles.message}>{item.text}</Text>
+      )}
+      {item?.image !== undefined ? (
+        //Timestamp and tick status
+        <View style={styles.timestampViewForImage}>
+          <Text style={styles.imageTime}>
+            {new Date(item.createdAt.toDate()).toLocaleTimeString().slice(0, 5)}
+          </Text>
+          {isMyMessage() && (
+            <Image
+              source={require("../../../assets/icons/doubleTick.png")}
+              style={styles.icon}
+            />
+          )}
+        </View>
+      ) : (
+        //Timestamp and tick status
+
+        <View style={styles.timestampView}>
+          <Text style={styles.time}>
+            {new Date(item.createdAt.toDate()).toLocaleTimeString().slice(0, 5)}
+          </Text>
+          {isMyMessage() && (
+            <Image
+              source={require("../../../assets/icons/doubleTick.png")}
+              style={styles.icon}
+            />
+          )}
+        </View>
+      )}
     </View>
   );
 };
@@ -45,7 +75,6 @@ export default Message;
 const styles = StyleSheet.create({
   container: {
     margin: 5,
-    padding: 10,
     borderRadius: 10,
     maxWidth: "80%",
 
@@ -60,6 +89,25 @@ const styles = StyleSheet.create({
 
     elevation: 1,
   },
+  timestampViewForImage: {
+    flexDirection: "row",
+    alignSelf: "flex-end",
+    top: 5 + windowHeight / 3.8,
+    paddingRight: 10,
+    paddingBottom: 5,
+    position: "absolute",
+  },
+  imageTime: {
+    alignSelf: "flex-end",
+    fontSize: 13,
+    color: "white",
+    fontWeight: "500",
+  },
+  image: {
+    height: windowHeight / 3.5,
+    width: windowWidth - 150,
+    marginBottom: 5,
+  },
   message: {
     margin: 2,
     fontSize: 15,
@@ -68,11 +116,12 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     opacity: 0.3,
     fontSize: 13,
+    fontWeight: "500",
   },
   timestampView: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-end",
   },
   icon: {
     height: 16,

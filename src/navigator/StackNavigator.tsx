@@ -583,7 +583,7 @@ const StackNavigator = () => {
         options={({ route }) => {
           return {
             presentation: "fullScreenModal",
-            headerShown:'false',
+            headerShown: "false",
           };
         }}
       />

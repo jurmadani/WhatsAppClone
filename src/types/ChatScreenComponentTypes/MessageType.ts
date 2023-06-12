@@ -7,6 +7,7 @@ export interface MessageType {
         };
         senderUniqueId: string;
         text: string;
+        image?: string;
     };
     index: number;
 }

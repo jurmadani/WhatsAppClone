@@ -1,6 +1,8 @@
 TODOS
 
   
+1)fix bug in sending images: now it sends a local uri instead of a uri from cloud storage(you need to upload it, get download url and then update firestore + do skeleton ui till it's done)
+
 2)in newconv modal when you tap on a contact go to a chatroom with him
 3)sync chats screen with backend
 4)add contacts bottom tab screen UI and sync it with backend

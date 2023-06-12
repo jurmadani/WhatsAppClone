@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#252525",
     flexDirection: "row",
     flex: 1,
-    marginTop: windowHeight /4,
+    marginTop: windowHeight / 4,
     justifyContent: "space-between",
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,

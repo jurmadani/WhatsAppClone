@@ -69,7 +69,6 @@ const ChatsScreen = ({ navigation }: any) => {
           const chatRoomSnapshot = await chatRoomRef.get();
           if (chatRoomSnapshot.exists) {
             const chatRoomData = chatRoomSnapshot.data();
-
             if (chatRoomData) {
               const lastMessageIndex = chatRoomData.messages.length - 1;
               const lastMessage = chatRoomData.messages[lastMessageIndex];
@@ -166,7 +165,7 @@ const ChatsScreen = ({ navigation }: any) => {
                       updatedChatRooms[chatRoomIndex] = {
                         ...updatedChatRooms[chatRoomIndex],
                         messages: updatedChatRoomData.messages,
-                        lastMessage: updatedLastMessage.text,
+                        lastMessage: updatedChatRoomData.lastMessage,
                         lastMessageCreatedAt:
                           updatedLastMessageCreatedAt.getTime(),
                         lastMessageTimestamp: updatedFormattedTime,

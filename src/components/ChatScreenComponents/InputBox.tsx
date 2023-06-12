@@ -133,6 +133,11 @@ const InputBox = ({
     if (cameraStatus)
       navigation.navigate("TakePhotoChatScreen", {
         receiverUniqueId: otherUserUniqueId,
+        usersDidChatBefore,
+        setDidUsersChatBefore,
+        chatRoom,
+        setChatRoomId,
+        messagesArray,
       });
   };
 
@@ -149,6 +154,11 @@ const InputBox = ({
       navigation.navigate("TakePhotoChatScreen", {
         receiverUniqueId: otherUserUniqueId,
         image: result.assets[0].uri,
+        usersDidChatBefore,
+        setDidUsersChatBefore,
+        chatRoom,
+        setChatRoomId,
+        messagesArray,
       });
     }
   };

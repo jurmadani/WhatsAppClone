@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   ImageBackground,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState, useRef, useEffect } from "react";
 import * as ImagePicker from "expo-image-picker";
@@ -17,14 +18,28 @@ import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { userSliceType } from "../types/redux/sliceTypes";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { firebase } from "../../backend/firebase";
+import { userSlice } from "../redux/userSlice";
+import SendingImageAsMessageModal from "../components/ChatScreenComponents/SendingImageAsMessageModal";
 
 const TakePhotoScreenForChat = ({ route }: any) => {
+  const {
+    receiverUniqueId,
+    usersDidChatBefore,
+    setDidUsersChatBefore,
+    chatRoom,
+    setChatRoomId,
+    messagesArray,
+  } = route?.params;
   const user: userSliceType = useSelector(
     //@ts-ignore
     (state) => state.user.user
   );
+  const getUID = require("uuid-by-string");
+  const [modalLoading, setModalLoading] = useState(false);
+  const dispatch = useDispatch();
   const [receiver, setReceiver] = useState(null);
   const [type, setType] = useState(CameraType.back);
   //@ts-expect-error
@@ -68,6 +83,154 @@ const TakePhotoScreenForChat = ({ route }: any) => {
     if (!result.canceled) {
       //@ts-expect-error
       setImage(result.assets[0].uri);
+    }
+  };
+
+  const handleSendImage = async () => {
+    if (usersDidChatBefore === false && image !== undefined) {
+      //create a new chat room doc in firestore
+      try {
+        //add to the existing chat room
+        const imageUID = getUID(image);
+        setModalLoading(true);
+        //@ts-ignore
+        const response = await fetch(image);
+        const blob = await response.blob();
+
+        var uploadTask = firebase
+          .storage()
+          .ref("images/")
+          .child(imageUID)
+          .put(blob);
+
+        //upload the picture to firebase
+        await uploadTask;
+
+        //getDownloadURL
+        const urlRef = firebase.storage().ref("images/").child(imageUID);
+
+        //get download url
+        const url = (await urlRef.getDownloadURL()).toString();
+
+        //get ref to collection
+        const chatRoomsCollection = firebase
+          .firestore()
+          .collection("ChatRooms");
+        //add new doc
+        var chatRoomDocumentObject = {
+          chatRoomId: "",
+          messages: [
+            {
+              text: "",
+              createdAt: new Date(),
+              chatRoomId: "",
+              senderUniqueId: user.uniqueId,
+              image: url,
+            },
+          ],
+          users: [user.uniqueId, receiverUniqueId],
+          lastMessage: user?.fullName + " send a photo",
+        };
+
+        const docRef = await chatRoomsCollection.add(chatRoomDocumentObject); // Create a new document with an auto-generated ID
+        const chatRoomId = docRef.id; // Get the generated ID
+        //mutate the object
+        chatRoomDocumentObject.chatRoomId = chatRoomId;
+        // Update the newly created document with the generated ID
+        await docRef.update({
+          chatRoomId,
+          messages: [
+            {
+              text: "",
+              createdAt: new Date(),
+              chatRoomId: chatRoomId,
+              senderUniqueId: user.uniqueId,
+              image: url,
+            },
+          ],
+        });
+
+        //update both users chatRooms arrays
+
+        //user that is logged in
+        await firebase
+          .firestore()
+          .collection("Users")
+          .doc(user?.uniqueId)
+          .update({
+            chatRooms: [...user?.chatRooms, chatRoomId],
+          });
+        //other user in chatroom
+        await firebase
+          .firestore()
+          .collection("Users")
+          .doc(receiverUniqueId) // Replace with the document ID of the other user
+          .update({
+            chatRooms: firebase.firestore.FieldValue.arrayUnion(chatRoomId),
+          });
+
+        dispatch(
+          userSlice.actions.updateUserGlobalStateChatRoomsArray({
+            chatRoomObject: [...user.chatRooms, chatRoomId],
+          })
+        );
+        setModalLoading(false);
+        setDidUsersChatBefore(true);
+        setChatRoomId(docRef.id);
+        console.log("Created new chat room document in firestore");
+        navigationHook.goBack();
+      } catch (error) {
+        console.log(error);
+      }
+    } else if (
+      chatRoom != undefined &&
+      usersDidChatBefore === true &&
+      image !== undefined
+    ) {
+      //add to the existing chat room
+      const imageUID = getUID(image);
+      setModalLoading(true);
+      //@ts-ignore
+      const response = await fetch(image);
+      const blob = await response.blob();
+
+      var uploadTask = firebase
+        .storage()
+        .ref("images/")
+        .child(imageUID)
+        .put(blob);
+
+      //upload the picture to firebase
+      await uploadTask;
+
+      //getDownloadURL
+      const urlRef = firebase.storage().ref("images/").child(imageUID);
+
+      //get download url
+      const url = (await urlRef.getDownloadURL()).toString();
+
+      await firebase
+        .firestore()
+        .collection("ChatRooms")
+        .doc(chatRoom.chatRoomId)
+        .update({
+          messages: [
+            ...messagesArray,
+            {
+              chatRoomId: chatRoom.chatRoomId,
+              createdAt: new Date(),
+              text: "",
+              senderUniqueId: user.uniqueId,
+              image: url,
+            },
+          ],
+          lastMessage: "You send a photo",
+        })
+        .then(() => {
+          setModalLoading(false);
+          console.log("Message with image sent");
+          navigationHook.goBack();
+        });
     }
   };
 
@@ -149,6 +312,10 @@ const TakePhotoScreenForChat = ({ route }: any) => {
         </Camera>
       ) : (
         <ImageBackground source={{ uri: image }} style={styles.camera}>
+          {/* Modal loading */}
+          {modalLoading && (
+            <SendingImageAsMessageModal modalLoading={modalLoading} />
+          )}
           {/* Cancel */}
           <TouchableOpacity
             style={styles.cancel}
@@ -165,7 +332,10 @@ const TakePhotoScreenForChat = ({ route }: any) => {
               </Text>
             </View>
             {/* Send button */}
-            <TouchableOpacity style={styles.sendView}>
+            <TouchableOpacity
+              style={styles.sendView}
+              onPress={() => handleSendImage()}
+            >
               <MaterialIcons
                 style={styles.send}
                 name="send"
