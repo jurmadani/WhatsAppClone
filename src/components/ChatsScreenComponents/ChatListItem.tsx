@@ -108,7 +108,16 @@ const ChatListItem = ({ item, searchInput }: ChatListItem) => {
                 />
               )}
               {/* Message */}
-              {item?.lastMessage?.length > 49 ? (
+              {item?.lastMessage === "You send a photo" ? (
+                item?.lastMessageSenderUniqueId === user.uniqueId ? (
+                  <Text style={styles.lastMessage}>You send a photo</Text>
+                ) : (
+                  <Text style={styles.lastMessage}>
+                    {otherUserAsContactInfo?.firstName}{" "}
+                    {otherUserAsContactInfo?.lastName} send a photo
+                  </Text>
+                )
+              ) : item?.lastMessage?.length > 49 ? (
                 <Text style={styles.lastMessage}>
                   {item?.lastMessage?.slice(0, 49)}...
                 </Text>
