@@ -18,20 +18,45 @@ import {
   data3,
 } from "../components/SettingsScreenComponents/ButtonData";
 import { useSelector } from "react-redux";
+import { initialStateToastNotificationSlice } from "../types/redux/sliceTypes";
+import { useToast } from "react-native-toast-notifications";
+import { useRoute } from "@react-navigation/native";
 
 const SettingsScreen = ({ navigation }: any) => {
   const scrollViewRef = useRef(null);
   const [offsetY, setOffsetY] = useState(0);
-
+  const isFirstRender = useRef(true);
+  const toast = useToast();
+  const route = useRoute();
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     setOffsetY(offsetY);
   };
-
+  const toastNotification: initialStateToastNotificationSlice = useSelector(
+    (state: any) => state.toastNotification
+  );
   useEffect(() => {
     navigation.setParams({ offsetY }); // Pass the offsetY value to route.params
   }, [offsetY]);
 
+  useEffect(() => {
+    // Skip execution on component mount
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (
+      toastNotification.displayNotification === true &&
+      route.name !== "ChatScreen" &&
+      route.name === "Chats"
+    ) {
+      toast.show(toastNotification.message, {
+        type: toastNotification.type,
+        placement: toastNotification.placement,
+        duration: 2500,
+      });
+    }
+  }, [toastNotification.displayNotification]);
   return (
     <ScrollView
       style={styles.screenContainer}

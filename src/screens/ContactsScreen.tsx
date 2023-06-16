@@ -10,15 +10,20 @@ import {
 import React, { useEffect, useState, useRef } from "react";
 import { SearchBar } from "@rneui/base";
 import { Divider } from "@ui-kitten/components";
-import { userSliceType } from "../types/redux/sliceTypes";
+import { initialStateToastNotificationSlice, userSliceType } from "../types/redux/sliceTypes";
 import { useSelector } from "react-redux";
 import YouContactCard from "../components/ContactsScreenComponents/YouContactCard";
 import { ContactArrayItem } from "../types/NewConversationModalScreenTypes/ContactsArrayType";
 import { firebase } from "../../backend/firebase";
 import Contact from "../components/ContactsScreenComponents/Contact";
 import ToastNotification from "../controllers/ToastNotification";
+import { useToast } from "react-native-toast-notifications";
+import { useRoute } from "@react-navigation/native";
 
 const ContactsScreen = ({ navigation }: any) => {
+  const isFirstRender = useRef(true);
+  const toast = useToast();
+  const route = useRoute();
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [contactsArray, setContactsArray] = useState<ContactArrayItem[]>([]);
@@ -29,10 +34,32 @@ const ContactsScreen = ({ navigation }: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     setOffsetY(offsetY);
   };
+  const toastNotification: initialStateToastNotificationSlice = useSelector(
+    (state: any) => state.toastNotification
+  );
 
   useEffect(() => {
     navigation.setParams({ offsetY }); // Pass the offsetY value to route.params
   }, [offsetY]);
+
+  useEffect(() => {
+    // Skip execution on component mount
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (
+      toastNotification.displayNotification === true &&
+      route.name !== "ChatScreen" &&
+      route.name === "Chats"
+    ) {
+      toast.show(toastNotification.message, {
+        type: toastNotification.type,
+        placement: toastNotification.placement,
+        duration: 2500,
+      });
+    }
+  }, [toastNotification.displayNotification]);
 
   useEffect(() => {
     setContactsArray([]);
@@ -188,7 +215,7 @@ const ContactsScreen = ({ navigation }: any) => {
                   letterChanged = true;
 
               return (
-                <Cont act
+                <Contact
                   index={index}
                   item={item}
                   didLetterChange={letterChanged}

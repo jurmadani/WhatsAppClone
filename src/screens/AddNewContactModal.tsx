@@ -9,13 +9,22 @@ import {
 import React, { useRef, useState, useEffect } from "react";
 import { Divider } from "@ui-kitten/components";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
+import { initialStateToastNotificationSlice } from "../types/redux/sliceTypes";
+import { useSelector } from "react-redux";
+import { useToast } from "react-native-toast-notifications";
 
 const AddNewContactModal = ({ navigation }: any) => {
   const navigationHook =
     useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
+  const toastNotification: initialStateToastNotificationSlice = useSelector(
+    (state: any) => state.toastNotification
+  );
+  const route = useRoute();
+  const toast = useToast();
+  const isFirstRender = useRef(true);
   const [country, setCountry] = useState("Romania");
   const [countryCode, setCountryCode] = useState("+40");
   const [firstName, setFirstName] = useState("");
@@ -40,6 +49,25 @@ const AddNewContactModal = ({ navigation }: any) => {
       });
     else navigation.setParams({ contanctCanBeSaved: false });
   }, [offsetY, phoneNumber, firstName, lastName, country, countryCode]);
+
+  useEffect(() => {
+    // Skip execution on component mount
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (
+      toastNotification.displayNotification === true &&
+      route.name !== "ChatScreen" &&
+      route.name === "AddNewContactModal"
+    ) {
+      toast.show(toastNotification.message, {
+        type: toastNotification.type,
+        placement: toastNotification.placement,
+        duration: 2500,
+      });
+    }
+  }, [toastNotification.displayNotification]);
   return (
     <ScrollView
       ref={scrollViewRef}
