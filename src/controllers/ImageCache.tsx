@@ -49,8 +49,11 @@ const ImageCache = ({
     skeleton: {
       height: height,
       width: width,
+      marginTop: marginTop,
       borderRadius: borderRadius,
-      marginBottom: 5,
+      marginBottom: imageType === "image sent as message" ? 5 : 0,
+      marginLeft: imageType === "image sent as message" ? 5 : 0,
+      marginRight: imageType === "image sent as message" ? 5 : 0,
     },
     activityIndicator: {
       position: "absolute",

@@ -71,6 +71,7 @@ const ChatListItem = ({ item, searchInput }: ChatListItem) => {
             otherUserUniqueId: otherUserAsContactInfo?.uniqueId,
             imageURL: otherUser?.imageURL,
             chatRoomId: item?.chatRoomId,
+            mediaArray: item?.mediaArray,
           });
         }}
       >
@@ -154,6 +155,7 @@ const ChatListItem = ({ item, searchInput }: ChatListItem) => {
             otherUserUniqueId: otherUserAsContactInfo?.uniqueId,
             imageURL: otherUser?.imageURL,
             chatRoomId: item?.chatRoomId,
+            mediaArray: item?.mediaArray,
           });
         }}
       >

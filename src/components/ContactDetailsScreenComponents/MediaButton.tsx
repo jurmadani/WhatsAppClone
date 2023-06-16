@@ -1,10 +1,26 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackNavigatorTypes } from "../../types/navigation/StackNavigatorTypes";
+import { IMediaArray } from "../../screens/ChatsScreen";
 
-const MediaButton = () => {
+interface IMediaArrayButtonExtended extends IMediaArray {
+  mediaArray: IMediaArray[];
+}
+
+const MediaButton = ({ mediaArray }: IMediaArrayButtonExtended) => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
   return (
-    <TouchableOpacity>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate("AllMedia", {
+          mediaArray,
+        })
+      }
+    >
       <View style={styles.container}>
         {/* Icon */}
         <Image
@@ -15,6 +31,7 @@ const MediaButton = () => {
         <Text style={styles.title}>Media, links, documents</Text>
         {/* Icon */}
         <View style={styles.icon}>
+          <Text style={styles.mediaSize}>{mediaArray.length}</Text>
           <AntDesign name="right" size={18} color={"#C9C9C9"} />
         </View>
       </View>
@@ -46,6 +63,13 @@ const styles = StyleSheet.create({
   },
   icon: {
     flex: 1,
-    alignItems: "flex-end",
+    justifyContent: "flex-end",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  mediaSize: {
+    opacity: 0.4,
+    fontSize: 17,
+    paddingRight: 5,
   },
 });

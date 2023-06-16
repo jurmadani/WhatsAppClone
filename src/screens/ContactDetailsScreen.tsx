@@ -126,7 +126,7 @@ const ContactDetailsScreen = ({ navigation, route }: any) => {
       {/* Status */}
       <StatusCard info={contact.info} />
       {/* List of buttons */}
-      <MediaButton />
+      <MediaButton mediaArray={route?.params?.contact?.mediaArray}/>
       {/* List of actions */}
       <View style={styles.listOfActionsView}>
         {actions.map((action, index) => (

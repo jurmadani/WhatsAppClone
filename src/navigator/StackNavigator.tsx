@@ -39,6 +39,7 @@ import { userSliceType } from "../types/redux/sliceTypes";
 import TakePhotoScreen from "../screens/TakePhotoScreen";
 import SetFlashButton from "../components/TakePhotoModalComponents/SetFlashButton";
 import TakePhotoScreenForChat from "../screens/TakePhotoScreenForChat";
+import AllMediaScreen from "../screens/AllMediaScreen";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -286,6 +287,7 @@ const StackNavigator = () => {
                         chatRoomId: route?.params?.chatRoomId,
                         imageURL: route?.params?.imageURL,
                         otherUserUniqueId: route?.params?.otherUserUniqueId,
+                        mediaArray: route?.params?.mediaArray
                       },
                     });
                   }}
@@ -579,11 +581,16 @@ const StackNavigator = () => {
       <Stack.Screen
         name="TakePhotoChatScreen"
         component={TakePhotoScreenForChat}
-        options={({ route }) => {
-          return {
-            presentation: "fullScreenModal",
-            headerShown: "false",
-          };
+        options={{
+          presentation: "fullScreenModal",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="AllMedia"
+        component={AllMediaScreen}
+        options={{
+          headerTitle: "Media & Photos",
         }}
       />
     </Stack.Navigator>

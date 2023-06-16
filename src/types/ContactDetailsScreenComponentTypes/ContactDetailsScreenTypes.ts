@@ -1,3 +1,5 @@
+import { timestamp } from "../redux/sliceTypes";
+
 export interface IContact {
     chatRoomId: string;
     firstName: string;

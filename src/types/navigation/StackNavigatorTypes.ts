@@ -15,4 +15,5 @@ export type StackNavigatorTypes = {
   EditContactModal: any
   TakePhoto: any
   TakePhotoChatScreen: any
+  AllMedia: any;
 };

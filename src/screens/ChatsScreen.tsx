@@ -17,7 +17,9 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { Divider } from "@ui-kitten/components";
 import {
   IChatRooms,
+  IMessage,
   initialStateToastNotificationSlice,
+  timestamp,
   userSliceType,
 } from "../types/redux/sliceTypes";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,6 +36,21 @@ export interface IChatRoomsExtended extends IChatRooms {
   lastMessageTimestamp: string;
   lastMessageCreatedAt: string;
   lastMessageSenderUniqueId: string;
+  mediaArray: {
+    image: string;
+    createdAt: timestamp;
+    senderUniqueId: string;
+  }[];
+}
+
+export interface IMessageExtended extends IMessage {
+  image?: string;
+}
+
+export interface IMediaArray {
+  image: string;
+  createdAt: timestamp;
+  senderUniqueId: string;
 }
 
 const ChatsScreen = ({ navigation }: any) => {
@@ -46,6 +63,7 @@ const ChatsScreen = ({ navigation }: any) => {
   const [chatRoomsArray, setChatRoomsArray] = useState<IChatRoomsExtended[]>(
     []
   );
+  const [mediaArray, setMediaArray] = useState<IMediaArray[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const user: userSliceType = useSelector((state: any) => state.user.user);
@@ -91,6 +109,7 @@ const ChatsScreen = ({ navigation }: any) => {
       try {
         const chatRoomIds = user?.chatRooms || [];
         const promises = chatRoomIds.map(async (chatRoomId) => {
+          setMediaArray([]);
           const chatRoomRef = firebase
             .firestore()
             .collection("ChatRooms")
@@ -107,8 +126,21 @@ const ChatsScreen = ({ navigation }: any) => {
               const currentDate = new Date();
               const timeDifference =
                 currentDate.getTime() - lastMessageCreatedAt.getTime();
-              let formattedTime;
 
+              const mediaData: IMediaArray[] = [];
+              //get all media from firestore in the current chatroom(media = images
+              chatRoomData.messages.forEach((message: IMessageExtended) => {
+                if (message.image !== undefined && message.text === "") {
+                  mediaData.push({
+                    image: message?.image,
+                    createdAt: message?.createdAt,
+                    senderUniqueId: message.senderUniqueId,
+                  });
+                }
+              });
+           //   setMediaArray(mediaData);
+              let formattedTime;
+              console.log(mediaArray)
               if (timeDifference < 86400000) {
                 // Less than 24 hours
                 formattedTime = lastMessageCreatedAt.toLocaleTimeString([], {
@@ -137,6 +169,7 @@ const ChatsScreen = ({ navigation }: any) => {
               }
               // Add a listener to the chat room document to listen for changes
               chatRoomRef.onSnapshot(async (snapshot) => {
+                const mediaData: IMediaArray[] = [];
                 const updatedChatRoomData = snapshot.data();
                 if (updatedChatRoomData) {
                   const updatedLastMessageIndex =
@@ -153,6 +186,20 @@ const ChatsScreen = ({ navigation }: any) => {
                   const updatedTimeDifference =
                     currentDate.getTime() -
                     updatedLastMessageCreatedAt.getTime();
+
+                  //get all media from firestore in the current chatroom(media = images
+                  updatedChatRoomData.messages.forEach(
+                    (message: IMessageExtended) => {
+                      if (message.image !== undefined && message.text === "") {
+                        mediaData.push({
+                          image: message?.image,
+                          createdAt: message?.createdAt,
+                          senderUniqueId: message.senderUniqueId,
+                        });
+                      }
+                    }
+                  );
+
                   let updatedFormattedTime: string;
 
                   if (updatedTimeDifference < 86400000) {
@@ -201,10 +248,13 @@ const ChatsScreen = ({ navigation }: any) => {
                         lastMessageTimestamp: updatedFormattedTime,
                         lastMessageSenderUniqueId:
                           updatedLastMessageSenderUniqueId,
+                        mediaArray: mediaData,
                       };
                     }
                     return updatedChatRooms;
                   });
+
+                  //toast notification
                   if (updatedLastMessageSenderUniqueId !== user?.uniqueId) {
                     const task = await firebase
                       .firestore()
@@ -256,6 +306,7 @@ const ChatsScreen = ({ navigation }: any) => {
                 lastMessageCreatedAt: lastMessageCreatedAt.getTime(),
                 lastMessageTimestamp: formattedTime,
                 lastMessageSenderUniqueId: lastMessageSenderUniqueId,
+                mediaArray: mediaData,
               };
             }
           }
@@ -275,7 +326,9 @@ const ChatsScreen = ({ navigation }: any) => {
       }
     };
 
-    fetchChatRooms().then(() => console.log("Fetching chat rooms done"));
+    fetchChatRooms().then(() => {
+      console.log(chatRoomsArray)
+      console.log("Fetching chat rooms done")});
   }, [user?.chatRooms, user?.contacts]);
 
   return (
