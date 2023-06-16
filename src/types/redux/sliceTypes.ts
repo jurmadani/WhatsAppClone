@@ -41,3 +41,59 @@ export type IMessage = {
     senderUniqueId: string;
 }
 
+export interface initialStateToastNotificationSlice {
+    message: string;
+    contactFirstName: string;
+    contactLastName: string;
+    contactImageURL: string;
+    type: string;
+    placement: "top" | "bottom" | "center",
+    duration: number;
+    displayNotification: boolean;
+    contactUniqueId: string;
+    chatRoomId: string;
+}
+
+export interface ICustomToastNotification {
+    toast: {
+        id?: string;
+
+        icon?: JSX.Element;
+
+        type?: "normal" | "success" | "danger" | "warning" | string;
+
+        duration?: number;
+
+        placement?: "top" | "bottom" | "center";
+
+        animationDuration?: number;
+
+        animationType?: "slide-in" | "zoom-in";
+
+        successIcon?: JSX.Element;
+
+        dangerIcon?: JSX.Element;
+
+        warningIcon?: JSX.Element;
+
+        successColor?: string;
+
+        dangerColor?: string;
+
+        warningColor?: string;
+
+        normalColor?: string;
+
+        onPress?(id: string): void;
+
+        onClose?(): void;
+
+        data?: any;
+        swipeEnabled?: boolean;
+        onDestroy(): void;
+        message: string | JSX.Element;
+        open: boolean;
+        onHide(): void;
+    }
+}
+

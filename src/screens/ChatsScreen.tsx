@@ -15,13 +15,20 @@ import ChatListItem from "../components/ChatsScreenComponents/ChatListItem";
 import { SearchBar } from "@rneui/themed";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Divider } from "@ui-kitten/components";
-import { IChatRooms, userSliceType } from "../types/redux/sliceTypes";
-import { useSelector } from "react-redux";
+import {
+  IChatRooms,
+  initialStateToastNotificationSlice,
+  userSliceType,
+} from "../types/redux/sliceTypes";
+import { useDispatch, useSelector } from "react-redux";
 import { firebase } from "../../backend/firebase";
 import ToastNotification from "../controllers/ToastNotification";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
+import { useToast } from "react-native-toast-notifications";
+import { useRoute } from "@react-navigation/native";
+import { toastNotificationSlice } from "../redux/toastNotificationSlice";
 
 export interface IChatRoomsExtended extends IChatRooms {
   lastMessageTimestamp: string;
@@ -30,6 +37,10 @@ export interface IChatRoomsExtended extends IChatRooms {
 }
 
 const ChatsScreen = ({ navigation }: any) => {
+  const isFirstRender = useRef(true);
+  const dispatch = useDispatch();
+  const toast = useToast();
+  const route = useRoute();
   const navigationHook =
     useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
   const [chatRoomsArray, setChatRoomsArray] = useState<IChatRoomsExtended[]>(
@@ -37,9 +48,9 @@ const ChatsScreen = ({ navigation }: any) => {
   );
   const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const user: userSliceType = useSelector(
-    //@ts-ignore
-    (state) => state.user.user
+  const user: userSliceType = useSelector((state: any) => state.user.user);
+  const toastNotification: initialStateToastNotificationSlice = useSelector(
+    (state: any) => state.toastNotification
   );
   const scrollViewRef = useRef(null);
   const [offsetY, setOffsetY] = useState(0);
@@ -52,6 +63,25 @@ const ChatsScreen = ({ navigation }: any) => {
   useEffect(() => {
     navigation.setParams({ offsetY }); // Pass the offsetY value to route.params
   }, [offsetY]);
+
+  useEffect(() => {
+    // Skip execution on component mount
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (
+      toastNotification.displayNotification === true &&
+      route.name !== "ChatScreen" &&
+      route.name === "Chats"
+    ) {
+      toast.show(toastNotification.message, {
+        type: toastNotification.type,
+        placement: toastNotification.placement,
+        duration: 2500,
+      });
+    }
+  }, [toastNotification.displayNotification]);
 
   useEffect(() => {
     setLoading(true);
@@ -106,7 +136,7 @@ const ChatsScreen = ({ navigation }: any) => {
                 formattedTime = formattedTime.split(",")[0].trim();
               }
               // Add a listener to the chat room document to listen for changes
-              chatRoomRef.onSnapshot((snapshot) => {
+              chatRoomRef.onSnapshot(async (snapshot) => {
                 const updatedChatRoomData = snapshot.data();
                 if (updatedChatRoomData) {
                   const updatedLastMessageIndex =
@@ -175,6 +205,46 @@ const ChatsScreen = ({ navigation }: any) => {
                     }
                     return updatedChatRooms;
                   });
+                  if (updatedLastMessageSenderUniqueId !== user?.uniqueId) {
+                    const task = await firebase
+                      .firestore()
+                      .collection("Users")
+                      .where("uniqueId", "==", updatedLastMessageSenderUniqueId)
+                      .get();
+
+                    const contact = user?.contacts.find(
+                      (c) => c.uniqueId === updatedLastMessageSenderUniqueId
+                    );
+
+                    //dispatch toast notification:
+                    dispatch(
+                      toastNotificationSlice.actions.showToast({
+                        message: updatedLastMessage.text,
+                        type: "normal",
+                        placement: "top",
+                        duration: 2500,
+                        contactFirstName:
+                          contact !== undefined
+                            ? contact.firstName
+                            : task.docs[0].data().fullName,
+                        contactLastName:
+                          contact !== undefined ? contact.lastName : "",
+                        contactImageURL: task.docs[0].data().imageURL,
+                        contactUniqueId:
+                          contact !== undefined
+                            ? contact.uniqueId
+                            : task.docs[0].data().uniqueId,
+                        chatRoomId:
+                          chatRoomData.chatRoomId !== undefined
+                            ? chatRoomData.chatRoomId
+                            : "",
+                      })
+                    );
+                    setTimeout(() => {
+                      dispatch(toastNotificationSlice.actions.hideToast());
+                    }, 2500);
+                    //
+                  }
                 }
               });
 
@@ -217,8 +287,8 @@ const ChatsScreen = ({ navigation }: any) => {
     >
       <View style={styles.screenContainer}>
         {/* Header title */}
-        <Text style={styles.headerStyle}>Chats</Text>
 
+        <Text style={styles.headerStyle}>Chats</Text>
         <View style={styles.SearchBarView}>
           {/* Search bar */}
           <SearchBar
@@ -236,6 +306,7 @@ const ChatsScreen = ({ navigation }: any) => {
             placeholder={"Search"}
             showCancel={false}
           />
+
           {/* Filter icon */}
           <View style={styles.filterIcon}>
             <Ionicons name="filter" size={24} color={"#3396FD"} />

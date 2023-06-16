@@ -1,13 +1,15 @@
 TODOS
 
   
-1)fix bug in sending images: now it sends a local uri instead of a uri from cloud 
-storage(you need to upload it, get download url and then update firestore 
-+ do skeleton ui till it's done)
+fix toast notification system : i don't wanna render a toast notification on component mount 
+chat screen press on image go to a screen that you can navigate through that + create a MediaScreen where you can see all photos sent in a chatroom with that user 
+create group
+create maybe new messages feature(to be displayed different that messages that you didn't open)
 
 5)status screen UI 
 6)calls?
 7)profile picture screen: finish action sheet (delete picture , take photo)
+8)change country picker from sign-up : verrrrry slowww 
 
 
 

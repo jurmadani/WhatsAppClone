@@ -34,13 +34,15 @@ const BottomTabNavigator = () => {
           if (route.name === "Status") {
             iconName = "ios-sync-circle-outline";
           } else if (route.name === "Calls") {
-            iconName = "call";
+            iconName = focused ? "call" : "call-outline";
           } else if (route.name === "Contacts") {
-            iconName = "ios-people";
+            iconName = focused ? "ios-people" : "ios-people-outline";
           } else if (route.name === "Chats") {
-            iconName = "ios-chatbubbles-sharp";
+            iconName = focused
+              ? "ios-chatbubbles-sharp"
+              : "ios-chatbubbles-outline";
           } else if (route.name === "Settings") {
-            iconName = "settings";
+            iconName = focused ? "settings" : "settings-outline";
           }
 
           return (

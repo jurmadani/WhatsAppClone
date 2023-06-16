@@ -5,16 +5,13 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../../types/navigation/StackNavigatorTypes";
 import { Divider } from "@ui-kitten/components";
 import { windowWidth } from "../../constants/Dimensions";
-import dayjs from "dayjs";
-import {
-  IChatRooms,
-  IContacts,
-  userSliceType,
-} from "../../types/redux/sliceTypes";
-import { useSelector } from "react-redux";
+import { useToast } from "react-native-toast-notifications";
+import { IContacts, userSliceType } from "../../types/redux/sliceTypes";
+import { useDispatch, useSelector } from "react-redux";
 import { firebase } from "../../../backend/firebase";
 import ImageCache from "../../controllers/ImageCache";
 import { IChatRoomsExtended } from "../../screens/ChatsScreen";
+import { toastNotificationSlice } from "../../redux/toastNotificationSlice";
 type ChatListItem = {
   item: IChatRoomsExtended;
   searchInput: string;
@@ -57,6 +54,7 @@ const ChatListItem = ({ item, searchInput }: ChatListItem) => {
     };
     fetchChatRoomData();
   }, []);
+
   if (searchInput === "")
     return (
       <TouchableOpacity

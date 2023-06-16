@@ -36,7 +36,6 @@ import ContactProfilePictureScreen from "../screens/ContactProfilePictureScreen"
 import EditContactModal from "../screens/EditContactModal";
 import SaveEditedContactButton from "../components/EditContactModalComponents/SaveEditedContactButton";
 import { userSliceType } from "../types/redux/sliceTypes";
-import { IContact } from "../types/ContactDetailsScreenComponentTypes/ContactDetailsScreenTypes";
 import TakePhotoScreen from "../screens/TakePhotoScreen";
 import SetFlashButton from "../components/TakePhotoModalComponents/SetFlashButton";
 import TakePhotoScreenForChat from "../screens/TakePhotoScreenForChat";
