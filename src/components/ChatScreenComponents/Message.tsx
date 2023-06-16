@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -7,13 +7,17 @@ import { useSelector } from "react-redux";
 import { MessageType } from "../../types/ChatScreenComponentTypes/MessageType";
 import { windowHeight, windowWidth } from "../../constants/Dimensions";
 import ImageCache from "../../controllers/ImageCache";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackNavigatorTypes } from "../../types/navigation/StackNavigatorTypes";
 
 const Message = ({ item, index }: MessageType) => {
   const user: userSliceType = useSelector((state: any) => state.user.user);
   const isMyMessage = () => {
     return item.senderUniqueId === user.uniqueId;
   };
-
+  const navigation =
+    useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
   return (
     <View
       style={[
@@ -27,14 +31,24 @@ const Message = ({ item, index }: MessageType) => {
     >
       {/* Messages */}
       {item?.image !== undefined ? (
-        <ImageCache
-          uri={item.image}
-          height={windowHeight / 3.5}
-          width={windowWidth - 150}
-          marginTop={5}
-          borderRadius={10}
-          imageType="image sent as message"
-        />
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("SpecificMedia", {
+              senderUniqueId: item.senderUniqueId,
+              createdAt: item.createdAt,
+              image: item.image,
+            })
+          }
+        >
+          <ImageCache
+            uri={item.image}
+            height={windowHeight / 3.5}
+            width={windowWidth - 150}
+            marginTop={5}
+            borderRadius={10}
+            imageType="image sent as message"
+          />
+        </TouchableOpacity>
       ) : (
         <Text style={styles.message}>{item.text}</Text>
       )}

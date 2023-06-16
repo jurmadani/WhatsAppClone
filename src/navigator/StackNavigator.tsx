@@ -40,6 +40,7 @@ import TakePhotoScreen from "../screens/TakePhotoScreen";
 import SetFlashButton from "../components/TakePhotoModalComponents/SetFlashButton";
 import TakePhotoScreenForChat from "../screens/TakePhotoScreenForChat";
 import AllMediaScreen from "../screens/AllMediaScreen";
+import SpecificMediaScreen from "../screens/SpecificMediaScreen";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -287,7 +288,7 @@ const StackNavigator = () => {
                         chatRoomId: route?.params?.chatRoomId,
                         imageURL: route?.params?.imageURL,
                         otherUserUniqueId: route?.params?.otherUserUniqueId,
-                        mediaArray: route?.params?.mediaArray
+                        mediaArray: route?.params?.mediaArray,
                       },
                     });
                   }}
@@ -591,6 +592,47 @@ const StackNavigator = () => {
         component={AllMediaScreen}
         options={{
           headerTitle: "Media & Photos",
+        }}
+      />
+      <Stack.Screen
+        name="SpecificMedia"
+        component={SpecificMediaScreen}
+        options={({ route }) => {
+          const createdDate = route?.params?.createdAt.toDate();
+          const createdMonth = createdDate.getMonth().toString();
+          const createdYear = createdDate.getFullYear().toString();
+          const createdDay = createdDate.getDate().toString();
+          const createdHour = createdDate.getHours().toString();
+          const createdMinutes = createdDate.getMinutes().toString();
+          var contact;
+          if (route?.params?.senderUniqueId !== user?.uniqueId) {
+            const contactData = user?.contacts.find(
+              (contact) => contact.uniqueId === route?.params?.senderUniqueId
+            );
+            contact = contactData?.firstName + " " + contactData?.lastName;
+          } else {
+            contact = "You";
+          }
+
+          return {
+            headerTitle:
+              contact +
+              " on " +
+              createdDay +
+              "." +
+              createdMonth +
+              "." +
+              createdYear +
+              ", " +
+              createdHour +
+              ":" +
+              createdMinutes,
+
+            headerTitleStyle: {
+              fontSize: 15,
+              fontWeight: "500",
+            },
+          };
         }}
       />
     </Stack.Navigator>

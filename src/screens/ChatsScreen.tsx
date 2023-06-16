@@ -138,9 +138,8 @@ const ChatsScreen = ({ navigation }: any) => {
                   });
                 }
               });
-           //   setMediaArray(mediaData);
+              //   setMediaArray(mediaData);
               let formattedTime;
-              console.log(mediaArray)
               if (timeDifference < 86400000) {
                 // Less than 24 hours
                 formattedTime = lastMessageCreatedAt.toLocaleTimeString([], {
@@ -327,8 +326,8 @@ const ChatsScreen = ({ navigation }: any) => {
     };
 
     fetchChatRooms().then(() => {
-      console.log(chatRoomsArray)
-      console.log("Fetching chat rooms done")});
+      console.log("Fetching chat rooms done");
+    });
   }, [user?.chatRooms, user?.contacts]);
 
   return (
