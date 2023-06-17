@@ -1,10 +1,11 @@
 TODOS
 
   
-fix toast notification system : i don't wanna render a toast notification on component mount 
-chat screen press on image go to a screen that you can navigate through that + create a MediaScreen where you can see all photos sent in a chatroom with that user 
-create group
-create maybe new messages feature(to be displayed different that messages that you didn't open)
+-fix toast notification : when tap on toast notification, some data are leaked and can't be used further on(when clicking on contact info in the headefer)
+-add timestamps in chat screen (group messages by timestamp)
+-implement new messages/seen messages system
+-create group
+-create maybe new messages feature(to be displayed different that messages that you didn't open)
 
 5)status screen UI 
 6)calls?

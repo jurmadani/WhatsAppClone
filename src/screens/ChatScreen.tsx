@@ -15,6 +15,7 @@ import { IChatRooms, IMessage, userSliceType } from "../types/redux/sliceTypes";
 import { useSelector } from "react-redux";
 import { firebase } from "../../backend/firebase";
 import Entypo from "react-native-vector-icons/Entypo";
+import dayjs from "dayjs";
 
 const ChatScreen = ({ route }: any) => {
   const user: userSliceType = useSelector((state: any) => state.user.user);
@@ -115,9 +116,29 @@ const ChatScreen = ({ route }: any) => {
                 return createdAtB.seconds - createdAtA.seconds;
               }
             })} // Reverse the array to display messages in descending order
-            renderItem={({ item, index }) => (
-              <Message item={item} index={index} />
-            )}
+            renderItem={({ item, index }) => {
+              const previousItem = index > 0 ? messagesArray[index - 1] : null;
+              const isSameTimestamp =
+                previousItem &&
+                dayjs(item.createdAt.toDate()).isSame(
+                  dayjs(previousItem.createdAt.toDate()),
+                  "day"
+                );
+              return (
+                <>
+                  <Message item={item} index={index} />
+                  {!isSameTimestamp && (
+                    <View style={styles.timestampContainer}>
+                      <Text style={styles.timestampText}>
+                        {dayjs(item.createdAt.toDate())
+                          .format("dddd, D MMMM")
+                          .toLowerCase()}
+                      </Text>
+                    </View>
+                  )}
+                </>
+              );
+            }}
             style={styles.list}
           />
         )}
@@ -143,6 +164,19 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 35,
     backgroundColor: "whitesmoke",
+  },
+  timestampText: {
+    fontSize: 13,
+    fontWeight: "600",
+    opacity: 0.5,
+  },
+  timestampContainer: {
+    alignSelf: "center",
+    backgroundColor: "#FEFFE3",
+    padding: 6,
+    marginTop: 15,
+    marginBottom: 10,
+    borderRadius: 7,
   },
   list: {
     padding: 8,
