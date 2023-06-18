@@ -457,6 +457,18 @@ const ChatsScreen = ({ navigation }: any) => {
             }}
           />
         )}
+        {filtered &&
+          chatRoomsArray.filter((item) => item.unreadMessages > 0).length ===
+            0 && (
+            <View style={styles.unreadConversationView}>
+              <Text style={styles.text2}>No unread conversation</Text>
+              <TouchableOpacity
+                onPress={() => setFiltered((prevFiltered) => !prevFiltered)}
+              >
+                <Text style={styles.text3}>Disable filter</Text>
+              </TouchableOpacity>
+            </View>
+          )}
       </View>
     </ScrollView>
   );
@@ -466,6 +478,20 @@ const styles = StyleSheet.create({
   screenContainer: {
     backgroundColor: "white",
     flex: 1,
+  },
+  unreadConversationView: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 50,
+  },
+  text2: {
+    fontSize: 20,
+    opacity: 0.4,
+  },
+  text3: {
+    marginTop: 10,
+    color: "#3396FD",
+    fontSize: 16,
   },
   SearchBarView: {
     flexDirection: "row",
