@@ -25,7 +25,6 @@ import {
 } from "../types/redux/sliceTypes";
 import { useDispatch, useSelector } from "react-redux";
 import { firebase } from "../../backend/firebase";
-import ToastNotification from "../controllers/ToastNotification";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";

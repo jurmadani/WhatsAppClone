@@ -2,50 +2,52 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableWithoutFeedback,
   SafeAreaView,
   TouchableOpacity,
   TextInput,
-  TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { windowWidth } from "../constants/Dimensions";
-import { Divider } from "@ui-kitten/components";
+import React, { useState, useEffect } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import { CountryPicker } from "react-native-country-codes-picker";
+import { Divider } from "@ui-kitten/components";
+import { windowWidth } from "../constants/Dimensions";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
-const SignupScreen = ({ navigation }: any) => {
-  const [show, setShow] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
+const LoginScreen = () => {
+  const [country, setCountry] = useState("Romania");
   const [countryCode, setCountryCode] = useState("+40");
-  const [countryName, setCountryName] = useState("Romania");
-  const [countryFlag, setCountryFlag] = useState("🇷🇴");
-  const navigationHook =
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const navigation =
     useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
   useEffect(() => {
     navigation.setParams({
       phoneNumber: phoneNumber,
       countryCode: countryCode,
-      countryName: countryName,
+      countryName: country,
     });
-  }, [phoneNumber, countryCode, countryName]);
+  }, [phoneNumber, countryCode, country]);
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <SafeAreaView style={styles.container}>
         {/* Description */}
         <Text style={styles.description}>
-          Please confirm your country code and enter your phone number
+          Please enter a phone number asociated with Whatsapp-Clone
         </Text>
         {/* Country selection */}
         <TouchableOpacity
-          onPress={() => setShow(true)}
           style={styles.countryNameView}
+          onPress={() =>
+            navigation.navigate("CountriesModal", {
+              setCountry: setCountry,
+              setCountryCode: setCountryCode,
+            })
+          }
         >
-          <Text style={styles.countryFlag}>{countryFlag}</Text>
-          <Text style={styles.countryName}>{countryName}</Text>
+          <Text style={styles.countryName}>{country}</Text>
           <AntDesign
             name="right"
             color={"#3396FD"}
@@ -66,45 +68,33 @@ const SignupScreen = ({ navigation }: any) => {
             onChangeText={(number) => setPhoneNumber(number)}
           />
         </View>
-        <CountryPicker
-          lang="en"
-          show={show}
-          pickerButtonOnPress={(item) => {
-            setCountryCode(item.dial_code);
-            setShow(false);
-            setCountryName(item.name.en);
-            setCountryFlag(item.flag);
-          }}
-          // when picker button press you will get the country object with dial code
-        />
         {/* Country picker */}
         <Divider style={styles.divider2} />
         {/* Consent */}
-        <Text style={styles.consentText}>
-          You must be{" "}
-          <Text style={styles.specialText}>at least 16 years old</Text> to
-          register. Learn how WhatsApp works with the{" "}
-          <Text style={styles.specialText}>Facebook Companies</Text>.
-        </Text>
-        <View style={styles.signinView}>
-          <Text style={styles.text}>
-            Already have a Whatsapp-Clone account?
+        <View style={styles.consentView}>
+          <Ionicons name="lock-closed" size={15} color={"gray"} />
+          <Text style={styles.consentText}>
+            Messages & images sent{" "}
+            <Text style={styles.specialText}>are not encrypted </Text>. By
+            pressing done you accept the terms.
           </Text>
-          <TouchableOpacity onPress={() => navigationHook.navigate("Login")}>
-            <Text style={styles.text2}> Sign-in</Text>
-          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );
 };
 
-export default SignupScreen;
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
+  },
+  consentView: {
+    flexDirection: "row",
+    marginTop: 20,
+    alignSelf: "center",
   },
   signinView: {
     flex: 1,
@@ -171,7 +161,8 @@ const styles = StyleSheet.create({
   consentText: {
     textAlign: "center",
     fontSize: 13,
-    marginTop: 20,
+    color: "gray",
+    width: windowWidth - 80,
   },
   specialText: {
     color: "#3396FD",

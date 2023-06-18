@@ -15,7 +15,6 @@ import { SearchBar } from "@rneui/base";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import SignupScreen from "../screens/SignupScreen";
 import { useState, useEffect } from "react";
-import { handleSignInWithPhoneNumber } from "../controllers/handleSignInWithPhoneNumber";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import EditProfileScreen from "../screens/EditProfileScreen";
@@ -42,6 +41,9 @@ import TakePhotoScreenForChat from "../screens/TakePhotoScreenForChat";
 import AllMediaScreen from "../screens/AllMediaScreen";
 import SpecificMediaScreen from "../screens/SpecificMediaScreen";
 import NewGroupModal from "../screens/NewGroupModal";
+import LoginScreen from "../screens/LoginScreen";
+import { handleSignUpWithPhoneNumber } from "../controllers/handleSignUpWithPhoneNumber";
+import { handleSignInWithPhoneNumber } from "../controllers/handleSignInWithPhoneNumber";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -76,7 +78,7 @@ const StackNavigator = () => {
               <Button
                 title="Done"
                 onPress={async () => {
-                  await handleSignInWithPhoneNumber(
+                  await handleSignUpWithPhoneNumber(
                     route.params?.phoneNumber,
                     route.params?.countryCode,
                     route.params?.countryName,
@@ -493,6 +495,32 @@ const StackNavigator = () => {
         options={{
           headerTitle: "New Group",
           presentation: "modal",
+        }}
+      />
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={({ route }) => {
+          return {
+            headerTitle: "Sign-in",
+            headerStyle: {
+              backgroundColor: "whitesmoke",
+            },
+            headerRight: () => (
+              <Button
+                title="Done"
+                onPress={async () => {
+                  await handleSignInWithPhoneNumber(
+                    route.params?.phoneNumber,
+                    route.params?.countryCode,
+                    route.params?.countryName,
+                    navigation,
+                    dispatch
+                  );
+                }}
+              />
+            ),
+          };
         }}
       />
     </Stack.Navigator>

@@ -19,7 +19,6 @@ import YouContactCard from "../components/ContactsScreenComponents/YouContactCar
 import { ContactArrayItem } from "../types/NewConversationModalScreenTypes/ContactsArrayType";
 import { firebase } from "../../backend/firebase";
 import Contact from "../components/ContactsScreenComponents/Contact";
-import ToastNotification from "../controllers/ToastNotification";
 import { useToast } from "react-native-toast-notifications";
 import { useRoute } from "@react-navigation/native";
 import { IMediaArray, IMessageExtended } from "./ChatsScreen";
