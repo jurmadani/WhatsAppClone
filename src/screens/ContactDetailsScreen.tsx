@@ -75,7 +75,35 @@ const ContactDetailsScreen = ({ navigation, route }: any) => {
         });
       }
     };
-    fetchContactPhoneNumber();
+    const fetchUserPhoneNumber = async () => {
+      const snapshot = await firebase
+        .firestore()
+        .collection("ChatRooms")
+        .doc(contact.chatRoomId)
+        .get();
+      if (snapshot) {
+        const otherUserUniqueId = snapshot.data()?.users.find(
+          (contact: string) => contact !== user?.uniqueId
+        );
+        const task = await firebase
+          .firestore()
+          .collection("Users")
+          .doc(otherUserUniqueId)
+          .get();
+        setContact({
+          ...contact,
+          phoneNumber: task?.data()?.phoneNumber,
+          country: task?.data()?.country,
+          countryCode: task?.data()?.countryCode,
+          info: task?.data()?.info,
+          firstName: task?.data()?.fullName,
+          lastName: "",
+        });
+      }
+    };
+    if (route?.params?.contact.otherUserUniqueId !== undefined)
+      fetchContactPhoneNumber();
+    else fetchUserPhoneNumber();
   }, [offsetY, user?.contacts]);
 
   useEffect(() => {
@@ -126,7 +154,7 @@ const ContactDetailsScreen = ({ navigation, route }: any) => {
       {/* Status */}
       <StatusCard info={contact.info} />
       {/* List of buttons */}
-      <MediaButton mediaArray={route?.params?.contact?.mediaArray}/>
+      <MediaButton mediaArray={route?.params?.contact?.mediaArray} />
       {/* List of actions */}
       <View style={styles.listOfActionsView}>
         {actions.map((action, index) => (
