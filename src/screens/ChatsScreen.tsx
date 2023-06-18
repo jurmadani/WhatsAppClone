@@ -8,6 +8,7 @@ import {
   Platform,
   ActivityIndicator,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import { chats } from "../../dummy-test-data/chats";
@@ -65,6 +66,7 @@ const ChatsScreen = ({ navigation }: any) => {
   const [chatRoomsArray, setChatRoomsArray] = useState<IChatRoomsExtended[]>(
     []
   );
+  const [filtered, setFiltered] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const user: userSliceType = useSelector((state: any) => state.user.user);
@@ -388,9 +390,21 @@ const ChatsScreen = ({ navigation }: any) => {
           />
 
           {/* Filter icon */}
-          <View style={styles.filterIcon}>
-            <Ionicons name="filter" size={24} color={"#3396FD"} />
-          </View>
+          <TouchableOpacity
+            onPress={() => setFiltered((prevFiltered) => !prevFiltered)}
+          >
+            <View
+              style={
+                filtered ? styles.filterIconPressed : styles.filterIconUnpressed
+              }
+            >
+              <Ionicons
+                name="filter"
+                size={20}
+                color={filtered ? "white" : "#3396FD"}
+              />
+            </View>
+          </TouchableOpacity>
         </View>
 
         <View
@@ -430,9 +444,13 @@ const ChatsScreen = ({ navigation }: any) => {
                 new Date(chatRoomA.lastMessageCreatedAt).getTime()
             )}
             showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <ChatListItem item={item} searchInput={searchInput} />
-            )}
+            renderItem={({ item }) => {
+              if (!filtered) {
+                return <ChatListItem item={item} searchInput={searchInput} />;
+              } else if (filtered && item.unreadMessages > 0) {
+                return <ChatListItem item={item} searchInput={searchInput} />;
+              }
+            }}
             scrollEnabled={false}
             contentContainerStyle={{
               paddingBottom: 95,
@@ -453,7 +471,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  filterIcon: {
+  filterIconUnpressed: {
     marginTop: 10,
     alignItems: "center",
     alignSelf: "center",
@@ -462,6 +480,17 @@ const styles = StyleSheet.create({
     height: 33,
     width: 33,
     alignContent: "center",
+  },
+  filterIconPressed: {
+    marginTop: 10,
+    alignItems: "center",
+    alignSelf: "center",
+    justifyContent: "center",
+    borderRadius: 99,
+    height: 33,
+    width: 33,
+    alignContent: "center",
+    backgroundColor: "#3396FD",
   },
   headerStyle: {
     fontWeight: "bold",

@@ -10,10 +10,9 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { windowWidth } from "../constants/Dimensions";
-import { CountryPicker } from "react-native-country-codes-picker";
 import { Divider } from "@ui-kitten/components";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import { firebase } from "../../backend/firebase";
+import { CountryPicker } from "react-native-country-codes-picker";
 
 const SignupScreen = ({ navigation }: any) => {
   const [show, setShow] = useState(false);
@@ -35,7 +34,6 @@ const SignupScreen = ({ navigation }: any) => {
         <Text style={styles.description}>
           Please confirm your country code and enter your phone number
         </Text>
-
         {/* Country selection */}
         <TouchableOpacity
           onPress={() => setShow(true)}
@@ -50,7 +48,6 @@ const SignupScreen = ({ navigation }: any) => {
             size={20}
           />
         </TouchableOpacity>
-
         {/* Phone number input */}
         <View style={styles.inputView}>
           <Text style={styles.countryCode}>{countryCode}</Text>
@@ -64,8 +61,6 @@ const SignupScreen = ({ navigation }: any) => {
             onChangeText={(number) => setPhoneNumber(number)}
           />
         </View>
-
-        {/* Country picker */}
         <CountryPicker
           lang="en"
           show={show}
@@ -77,6 +72,7 @@ const SignupScreen = ({ navigation }: any) => {
           }}
           // when picker button press you will get the country object with dial code
         />
+        {/* Country picker */}
         <Divider style={styles.divider2} />
         {/* Consent */}
         <Text style={styles.consentText}>
