@@ -17,4 +17,5 @@ export type StackNavigatorTypes = {
   TakePhotoChatScreen: any
   AllMedia: any;
   SpecificMedia: any
+  NewGroup: any
 };

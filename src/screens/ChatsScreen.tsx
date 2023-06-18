@@ -420,8 +420,12 @@ const ChatsScreen = ({ navigation }: any) => {
             //@ts-expect-error
             onPress={() => navigationHook.navigate("Contacts")}
           />
-          {/* New chat */}
-          <Button title="New group" color={"#3396FD"} />
+          {/* New group */}
+          <Button
+            title="New group"
+            color={"#3396FD"}
+            onPress={() => navigationHook.navigate("NewGroup")}
+          />
         </View>
 
         <Divider />

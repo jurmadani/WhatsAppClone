@@ -41,6 +41,7 @@ import SetFlashButton from "../components/TakePhotoModalComponents/SetFlashButto
 import TakePhotoScreenForChat from "../screens/TakePhotoScreenForChat";
 import AllMediaScreen from "../screens/AllMediaScreen";
 import SpecificMediaScreen from "../screens/SpecificMediaScreen";
+import NewGroupModal from "../screens/NewGroupModal";
 
 const Stack = createNativeStackNavigator<StackNavigatorTypes>();
 
@@ -484,6 +485,14 @@ const StackNavigator = () => {
               fontWeight: "500",
             },
           };
+        }}
+      />
+      <Stack.Screen
+        name="NewGroup"
+        component={NewGroupModal}
+        options={{
+          headerTitle: "New Group",
+          presentation: "modal",
         }}
       />
     </Stack.Navigator>

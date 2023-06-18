@@ -6,11 +6,11 @@ import {
   Platform,
   Image,
 } from "react-native";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { SearchBar } from "@rneui/base";
 import { Divider } from "@ui-kitten/components";
 
-const CallsScreen = ({ navigation }: any) => {
+const StatusScreen = ({ navigation }: any) => {
   const [searchInput, setSearchInput] = useState("");
   const scrollViewRef = useRef(null);
   const [offsetY, setOffsetY] = useState(0);
@@ -29,7 +29,7 @@ const CallsScreen = ({ navigation }: any) => {
       scrollEventThrottle={24}
     >
       {/* Header title */}
-      <Text style={styles.headerStyle}>Calls</Text>
+      <Text style={styles.headerStyle}>Status</Text>
       <SearchBar
         //@ts-ignore
         platform={Platform.OS === "ios" ? "ios" : "android"}
@@ -61,7 +61,7 @@ const CallsScreen = ({ navigation }: any) => {
   );
 };
 
-export default CallsScreen;
+export default StatusScreen;
 
 const styles = StyleSheet.create({
   screenContainer: {

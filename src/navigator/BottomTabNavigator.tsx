@@ -15,6 +15,7 @@ import CameraIcon from "../components/ChatsScreenComponents/CameraIcon";
 import SettingsScreen from "../screens/SettingsScreen";
 import ContactsScreen from "../screens/ContactsScreen";
 import CallsScreen from "../screens/CallsScreen";
+import StatusScreen from "../screens/StatusScreen";
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorType>();
 
@@ -69,7 +70,24 @@ const BottomTabNavigator = () => {
         },
       })}
     >
-      <Tab.Screen name="Status" component={NotImplementedYetScreen} />
+      <Tab.Screen
+        name="Status"
+        component={StatusScreen}
+        options={({ route }) => {
+          const offsetY = route?.params?.offsetY || 0;
+          const showTitle = offsetY > 34.5;
+          return {
+            headerStyle: {
+              backgroundColor: showTitle ? "whitesmoke" : "white",
+            },
+            headerShadowVisible: showTitle ? true : false,
+            headerTitle: showTitle ? "Status" : "", // Conditionally show/hide the title
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
+          };
+        }}
+      />
       <Tab.Screen
         name="Calls"
         component={CallsScreen}

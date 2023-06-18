@@ -17,8 +17,10 @@ const CustomToastNotification = ({ toast }: ICustomToastNotification) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
   const dispatch = useDispatch();
-  return (
-    <TouchableOpacity
+
+  {
+    /*
+   <TouchableOpacity
       onPress={() => {
         navigation.navigate("ChatScreen", {
           firstName: toastNotificationReduxState.contactFirstName,
@@ -29,29 +31,33 @@ const CustomToastNotification = ({ toast }: ICustomToastNotification) => {
         });
       }}
     >
-      <View style={styles.container}>
-        {/* contact image */}
-        <ImageCache
-          uri={toastNotificationReduxState.contactImageURL}
-          height={50}
-          width={50}
-          borderRadius={99}
-          imageType="contact image from toast notification"
-        />
-
-        <View>
-          {/* Contact name */}
-          <Text style={styles.contactName}>
-            {toastNotificationReduxState.contactFirstName}{" "}
-            {toastNotificationReduxState.contactLastName}
-          </Text>
-          {/* Message */}
-          <Text style={styles.message}>
-            {toastNotificationReduxState.message}
-          </Text>
-        </View>
-      </View>
     </TouchableOpacity>
+  
+  */
+  }
+  return (
+    <View style={styles.container}>
+      {/* contact image */}
+      <ImageCache
+        uri={toastNotificationReduxState.contactImageURL}
+        height={50}
+        width={50}
+        borderRadius={99}
+        imageType="contact image from toast notification"
+      />
+
+      <View>
+        {/* Contact name */}
+        <Text style={styles.contactName}>
+          {toastNotificationReduxState.contactFirstName}{" "}
+          {toastNotificationReduxState.contactLastName}
+        </Text>
+        {/* Message */}
+        <Text style={styles.message}>
+          {toastNotificationReduxState.message}
+        </Text>
+      </View>
+    </View>
   );
 };
 

@@ -15,7 +15,7 @@ const Button = ({ iconName, buttonName }: ButtonInterface) => {
     if (buttonName === "New contact") {
       navigation.navigate("AddNewContactModal");
     } else if (buttonName === "New group") {
-      navigation.navigate("CreateNewGroupModal");
+      navigation.navigate("NewGroup");
     }
   };
   return (
