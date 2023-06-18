@@ -60,7 +60,7 @@ const ContactDetailsScreen = ({ navigation, route }: any) => {
         .where("uniqueId", "==", contact.otherUserUniqueId)
         .get();
       const data = snapshot.docs.map((doc) => doc.data());
-      if (data.length > 0) {
+      if (data?.length > 0) {
         const currentContactInformation = user.contacts.filter(
           (contactObj) => contactObj.uniqueId === contact.otherUserUniqueId
         );

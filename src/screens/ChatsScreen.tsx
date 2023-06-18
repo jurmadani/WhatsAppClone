@@ -25,7 +25,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { firebase } from "../../backend/firebase";
 import ToastNotification from "../controllers/ToastNotification";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
 import { useToast } from "react-native-toast-notifications";
@@ -41,12 +41,13 @@ export interface IChatRoomsExtended extends IChatRooms {
     createdAt: timestamp;
     senderUniqueId: string;
   }[];
+  unreadMessages: number;
 }
 
 export interface IMessageExtended extends IMessage {
   image?: string;
+  read: boolean;
 }
-
 export interface IMediaArray {
   image: string;
   createdAt: timestamp;
@@ -58,12 +59,12 @@ const ChatsScreen = ({ navigation }: any) => {
   const dispatch = useDispatch();
   const toast = useToast();
   const route = useRoute();
+  const isFocused = useIsFocused();
   const navigationHook =
     useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
   const [chatRoomsArray, setChatRoomsArray] = useState<IChatRoomsExtended[]>(
     []
   );
-  const [mediaArray, setMediaArray] = useState<IMediaArray[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const user: userSliceType = useSelector((state: any) => state.user.user);
@@ -88,9 +89,10 @@ const ChatsScreen = ({ navigation }: any) => {
       isFirstRender.current = false;
       return;
     }
+
     if (
-      toastNotification.displayNotification === true &&
-      route.name !== "ChatScreen" &&
+      toastNotification.displayNotification &&
+      isFocused &&
       route.name === "Chats"
     ) {
       toast.show(toastNotification.message, {
@@ -99,7 +101,7 @@ const ChatsScreen = ({ navigation }: any) => {
         duration: 2500,
       });
     }
-  }, [toastNotification.displayNotification]);
+  }, [toastNotification.displayNotification, route.name]);
 
   useEffect(() => {
     setLoading(true);
@@ -109,7 +111,6 @@ const ChatsScreen = ({ navigation }: any) => {
       try {
         const chatRoomIds = user?.chatRooms || [];
         const promises = chatRoomIds.map(async (chatRoomId) => {
-          setMediaArray([]);
           const chatRoomRef = firebase
             .firestore()
             .collection("ChatRooms")
@@ -117,8 +118,17 @@ const ChatsScreen = ({ navigation }: any) => {
 
           const chatRoomSnapshot = await chatRoomRef.get();
           if (chatRoomSnapshot.exists) {
+            //unread messages
+            var unreadMessages: number = 0;
             const chatRoomData = chatRoomSnapshot.data();
             if (chatRoomData) {
+              chatRoomData.messages.forEach((message: IMessageExtended) => {
+                if (
+                  message.read === false &&
+                  message.senderUniqueId !== user?.uniqueId
+                )
+                  unreadMessages = unreadMessages + 1;
+              });
               const lastMessageIndex = chatRoomData.messages.length - 1;
               const lastMessage = chatRoomData.messages[lastMessageIndex];
               const lastMessageSenderUniqueId = lastMessage.senderUniqueId;
@@ -168,9 +178,20 @@ const ChatsScreen = ({ navigation }: any) => {
               }
               // Add a listener to the chat room document to listen for changes
               chatRoomRef.onSnapshot(async (snapshot) => {
+                var unreadMessages: number = 0;
                 const mediaData: IMediaArray[] = [];
                 const updatedChatRoomData = snapshot.data();
                 if (updatedChatRoomData) {
+                  //get unread messages from that chatroom
+                  updatedChatRoomData.messages.forEach(
+                    (message: IMessageExtended) => {
+                      if (
+                        message.read === false &&
+                        message.senderUniqueId !== user?.uniqueId
+                      )
+                        unreadMessages = unreadMessages + 1;
+                    }
+                  );
                   const updatedLastMessageIndex =
                     updatedChatRoomData.messages.length - 1;
                   const updatedLastMessage =
@@ -248,6 +269,7 @@ const ChatsScreen = ({ navigation }: any) => {
                         lastMessageSenderUniqueId:
                           updatedLastMessageSenderUniqueId,
                         mediaArray: mediaData,
+                        unreadMessages: unreadMessages,
                       };
                     }
                     return updatedChatRooms;
@@ -268,7 +290,12 @@ const ChatsScreen = ({ navigation }: any) => {
                     //dispatch toast notification:
                     dispatch(
                       toastNotificationSlice.actions.showToast({
-                        message: updatedLastMessage.text,
+                        message:
+                          updatedLastMessage.text === ""
+                            ? contact !== undefined
+                              ? contact.firstName + " send a photo"
+                              : task.docs[0].data().fullName + " send a photo"
+                            : updatedLastMessage.text,
                         type: "normal",
                         placement: "top",
                         duration: 2500,
@@ -306,6 +333,7 @@ const ChatsScreen = ({ navigation }: any) => {
                 lastMessageTimestamp: formattedTime,
                 lastMessageSenderUniqueId: lastMessageSenderUniqueId,
                 mediaArray: mediaData,
+                unreadMessages: unreadMessages,
               };
             }
           }

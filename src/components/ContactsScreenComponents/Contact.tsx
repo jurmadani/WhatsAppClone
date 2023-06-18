@@ -26,6 +26,7 @@ const Contact = ({ item, index, didLetterChange }: RenderItemTypes) => {
             imageURL: item.imageURL,
             otherUserUniqueId: item.uniqueId,
             chatRoomId: item.chatRoomId,
+            mediaArray:item.mediaArray
           })
         }
       >

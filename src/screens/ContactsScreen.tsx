@@ -10,7 +10,10 @@ import {
 import React, { useEffect, useState, useRef } from "react";
 import { SearchBar } from "@rneui/base";
 import { Divider } from "@ui-kitten/components";
-import { initialStateToastNotificationSlice, userSliceType } from "../types/redux/sliceTypes";
+import {
+  initialStateToastNotificationSlice,
+  userSliceType,
+} from "../types/redux/sliceTypes";
 import { useSelector } from "react-redux";
 import YouContactCard from "../components/ContactsScreenComponents/YouContactCard";
 import { ContactArrayItem } from "../types/NewConversationModalScreenTypes/ContactsArrayType";
@@ -19,6 +22,7 @@ import Contact from "../components/ContactsScreenComponents/Contact";
 import ToastNotification from "../controllers/ToastNotification";
 import { useToast } from "react-native-toast-notifications";
 import { useRoute } from "@react-navigation/native";
+import { IMediaArray, IMessageExtended } from "./ChatsScreen";
 
 const ContactsScreen = ({ navigation }: any) => {
   const isFirstRender = useRef(true);
@@ -70,6 +74,7 @@ const ContactsScreen = ({ navigation }: any) => {
         const contactsData = [];
 
         for (const contact of user?.contacts) {
+          const mediaData: IMediaArray[] = [];
           const snapshot = await firebase
             .firestore()
             .collection("Users")
@@ -92,6 +97,15 @@ const ContactsScreen = ({ navigation }: any) => {
             let found = false;
             chatRoomsDocuments.map((document) => {
               if (document.users.includes(contact.uniqueId)) {
+                document.messages.forEach((message: IMessageExtended) => {
+                  if (message.image !== undefined && message.text === "") {
+                    mediaData.push({
+                      image: message?.image,
+                      createdAt: message?.createdAt,
+                      senderUniqueId: message.senderUniqueId,
+                    });
+                  }
+                });
                 const newContactObject = {
                   firstName: contact.firstName,
                   lastName: contact.lastName,
@@ -99,7 +113,9 @@ const ContactsScreen = ({ navigation }: any) => {
                   imageURL: documents[0].imageURL,
                   info: documents[0].info,
                   chatRoomId: document.chatRoomId,
+                  mediaArray: mediaData,
                 };
+
                 contactsData.push(newContactObject);
                 found = true;
               }
@@ -112,6 +128,7 @@ const ContactsScreen = ({ navigation }: any) => {
                 imageURL: documents[0].imageURL,
                 info: documents[0].info,
                 chatRoomId: "",
+                mediaArray: mediaData,
               };
               contactsData.push(newContactObject);
             }

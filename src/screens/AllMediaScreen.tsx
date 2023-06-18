@@ -74,33 +74,36 @@ const AllMediaScreen = ({ route }: any) => {
 
   return (
     <View>
-      <ScrollView scrollEnabled={enableScroll}>
-        <FlatList
-          scrollEnabled={false}
-          ref={(ref) => (flatListRef.current = ref)}
-          data={timestampedMedia}
-          keyExtractor={(item) => item.timestamp}
-          renderItem={({ item }) => (
-            <View>
-              <Text style={styles.timestamp}>{item.timestamp}</Text>
-              <FlatList
-                scrollEnabled={false}
-                horizontal
-                data={item.mediaArray}
-                keyExtractor={(media) => media.createdAt.toString()}
-                renderItem={({ item: media }) => (
-                  <MediaComponent
-                    image={media.image}
-                    senderUniqueId={media.senderUniqueId}
-                    createdAt={media.createdAt}
-                  />
-                )}
-              />
-            </View>
-          )}
-          onContentSizeChange={handleContentSizeChange}
-        />
-      </ScrollView>
+      {route?.params?.mediaArray.length > 0 && (
+        <ScrollView scrollEnabled={enableScroll}>
+          <FlatList
+            scrollEnabled={false}
+            ref={(ref) => (flatListRef.current = ref)}
+            data={timestampedMedia}
+            keyExtractor={(item) => item.timestamp}
+            renderItem={({ item }) => (
+              <View>
+                <Text style={styles.timestamp}>{item.timestamp}</Text>
+                <FlatList
+                  scrollEnabled={false}
+                  horizontal
+                  data={item.mediaArray}
+                  keyExtractor={(media) => media.createdAt.toString()}
+                  renderItem={({ item: media }) => (
+                    <MediaComponent
+                      image={media.image}
+                      senderUniqueId={media.senderUniqueId}
+                      createdAt={media.createdAt}
+                    />
+                  )}
+                />
+              </View>
+            )}
+            onContentSizeChange={handleContentSizeChange}
+          />
+        </ScrollView>
+      )}
+
       <Text style={styles.text}>
         {route?.params?.mediaArray.length} pictures
       </Text>

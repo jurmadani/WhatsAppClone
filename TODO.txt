@@ -2,7 +2,8 @@ TODOS
 
   
 -fix toast notification : when tap on toast notification, some data are leaked and can't be used further on(when clicking on contact info in the headefer)
--add timestamps in chat screen (group messages by timestamp)
+-fix timestamp in chatlist item in chats screen
+-when rendering chatscreen update firestore message's read flag to true
 -implement new messages/seen messages system
 -create group
 -create maybe new messages feature(to be displayed different that messages that you didn't open)

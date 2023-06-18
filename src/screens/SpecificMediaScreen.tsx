@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import ImageCache from "../controllers/ImageCache";
 import { windowHeight, windowWidth } from "../constants/Dimensions";
+import AnimatedImageCache from "../controllers/AnimatedImageCache";
 
 const SpecificMediaScreen = ({ route }: any) => {
   return (
     <View style={styles.container}>
-      <ImageCache
+      <AnimatedImageCache
         uri={route?.params?.image}
-        height={windowHeight / 2}
+        height={windowHeight}
         width={windowWidth}
         imageType="specific media image"
       />

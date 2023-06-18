@@ -1,3 +1,5 @@
+import { timestamp } from "../redux/sliceTypes";
+
 export interface RenderItemTypes {
     item: Item;
     index: number;
@@ -11,4 +13,9 @@ interface Item {
     imageURL: string;
     info: string
     chatRoomId: string;
+    mediaArray: {
+        image: string;
+        createdAt: timestamp;
+        senderUniqueId: string;
+    }[];
 }

@@ -1,3 +1,4 @@
+import { IMessageExtended } from "../../screens/ChatsScreen";
 import { IChatRooms, IMessage } from "../redux/sliceTypes";
 
 export interface InputBoxTypes {
@@ -7,6 +8,6 @@ export interface InputBoxTypes {
     chatRoom: IChatRooms | undefined;
     setChatRoomId: React.Dispatch<any>
     messagesArray: IMessage[]
-    setMessagesArray: React.Dispatch<React.SetStateAction<IMessage[]>>
+    setMessagesArray: React.Dispatch<React.SetStateAction<IMessageExtended[]>>
 
 }

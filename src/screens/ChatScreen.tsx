@@ -16,13 +16,14 @@ import { useSelector } from "react-redux";
 import { firebase } from "../../backend/firebase";
 import Entypo from "react-native-vector-icons/Entypo";
 import dayjs from "dayjs";
+import { IMessageExtended } from "./ChatsScreen";
 
 const ChatScreen = ({ route }: any) => {
   const user: userSliceType = useSelector((state: any) => state.user.user);
   const [chatRoomId, setChatRoomId] = useState(route?.params?.chatRoomId);
   const [loading, setLoading] = useState(false);
   const [usersDidChatBefore, setDidUsersChatBefore] = useState(false);
-  const [messagesArray, setMessagesArray] = useState<IMessage[]>([]);
+  const [messagesArray, setMessagesArray] = useState<IMessageExtended[]>([]);
   const [chatRoom, setChatRoom] = useState<IChatRooms>();
   const fetchMessages = async () => {
     if (chatRoomId != "")
@@ -68,6 +69,31 @@ const ChatScreen = ({ route }: any) => {
     }
   };
 
+  const updateMessagesReadStatus = async () => {
+    if (messagesArray.length > 0) {
+      // Loop through each message and set the read property to true if the sender is different from the current user
+      const updatedMessages = messagesArray.map((message) => {
+        if (message?.senderUniqueId !== user.uniqueId) {
+          return { ...message, read: true };
+        }
+        return message;
+      });
+
+      // Update Firestore with the inverted array of modified messages
+      firebase
+        .firestore()
+        .collection("ChatRooms")
+        .doc(chatRoomId)
+        .update({ messages: updatedMessages.reverse() })
+        .then(() => {
+          console.log("Messages array updated in Firestore");
+        })
+        .catch((error) => {
+          console.log("Error updating messages array in Firestore:", error);
+        });
+    }
+  };
+
   useEffect(() => {
     setLoading(true);
     fetchMessages().then(() => {
@@ -81,6 +107,9 @@ const ChatScreen = ({ route }: any) => {
       );
     });
   }, [user?.chatRooms, chatRoomId]);
+  useEffect(() => {
+    updateMessagesReadStatus();
+  }, [messagesArray]);
 
   return (
     <KeyboardAvoidingView
@@ -107,27 +136,31 @@ const ChatScreen = ({ route }: any) => {
         ) : (
           <FlatList
             inverted
-            data={messagesArray.sort((a, b) => {
-              const createdAtA = a.createdAt;
-              const createdAtB = b.createdAt;
-              if (createdAtA.seconds === createdAtB.seconds) {
-                return createdAtB.nanoseconds - createdAtA.nanoseconds;
-              } else {
-                return createdAtB.seconds - createdAtA.seconds;
+            data={messagesArray.sort(
+              (a: IMessageExtended, b: IMessageExtended) => {
+                const createdAtA = a.createdAt;
+                const createdAtB = b.createdAt;
+                if (createdAtA.seconds === createdAtB.seconds) {
+                  return createdAtB.nanoseconds - createdAtA.nanoseconds;
+                } else {
+                  return createdAtB.seconds - createdAtA.seconds;
+                }
               }
-            })} // Reverse the array to display messages in descending order
+            )}
             renderItem={({ item, index }) => {
-              const previousItem = index > 0 ? messagesArray[index - 1] : null;
-              const isSameTimestamp =
+              const previousItem = index > 0 ? messagesArray[index + 1] : null;
+              const isSameDay =
                 previousItem &&
                 dayjs(item.createdAt.toDate()).isSame(
-                  dayjs(previousItem.createdAt.toDate()),
+                  previousItem.createdAt.toDate(),
                   "day"
                 );
+
               return (
                 <>
                   <Message item={item} index={index} />
-                  {!isSameTimestamp && (
+                  {(isSameDay === false ||
+                    index + 1 === messagesArray.length) && (
                     <View style={styles.timestampContainer}>
                       <Text style={styles.timestampText}>
                         {dayjs(item.createdAt.toDate())

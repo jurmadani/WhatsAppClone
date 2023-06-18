@@ -4,7 +4,7 @@ import { userSlice } from "../redux/userSlice";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../types/navigation/StackNavigatorTypes";
 import { AnyAction, Dispatch } from '@reduxjs/toolkit';
-/*
+
 
 export async function handleSignInWithPhoneNumber(phoneNumber: string,
     countryCode: string,
@@ -44,9 +44,8 @@ export async function handleSignInWithPhoneNumber(phoneNumber: string,
 
 
 }
-*/
 
-
+/*
 export async function handleSignInWithPhoneNumber(phoneNumber: string,
     countryCode: string,
     country: string,
@@ -97,4 +96,5 @@ export async function handleSignInWithPhoneNumber(phoneNumber: string,
 
 
 }
+*/
 

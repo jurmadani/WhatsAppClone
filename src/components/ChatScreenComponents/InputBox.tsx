@@ -20,6 +20,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../../types/navigation/StackNavigatorTypes";
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
+import { Audio } from "expo-av";
 
 const InputBox = ({
   usersDidChatBefore,
@@ -35,6 +36,12 @@ const InputBox = ({
   const [message, setMessage] = useState("");
   const navigation =
     useNavigation<NativeStackNavigationProp<StackNavigatorTypes>>();
+  const playSound = async () => {
+    const { sound } = await Audio.Sound.createAsync(
+      require("../../../assets/audio/sound.mp3")
+    );
+    await sound.playAsync();
+  };
   const handleSendMessage = async () => {
     if (usersDidChatBefore === false) {
       //create a new chat room doc in firestore
@@ -52,6 +59,7 @@ const InputBox = ({
               createdAt: new Date(),
               chatRoomId: "",
               senderUniqueId: user.uniqueId,
+              read: false,
             },
           ],
           users: [user.uniqueId, otherUserUniqueId],
@@ -70,6 +78,7 @@ const InputBox = ({
               createdAt: new Date(),
               chatRoomId: chatRoomId,
               senderUniqueId: user.uniqueId,
+              read: false,
             },
           ],
         });
@@ -107,6 +116,7 @@ const InputBox = ({
       }
     } else if (chatRoom != undefined && usersDidChatBefore === true) {
       //add to the existing chat room
+      playSound();
       await firebase
         .firestore()
         .collection("ChatRooms")
@@ -119,6 +129,7 @@ const InputBox = ({
               createdAt: new Date(),
               text: message,
               senderUniqueId: user.uniqueId,
+              read: false,
             },
           ],
           lastMessage: message,

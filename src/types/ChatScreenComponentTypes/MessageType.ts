@@ -8,6 +8,7 @@ export interface MessageType {
         senderUniqueId: string;
         text: string;
         image?: string;
+        read:boolean
     };
     index: number;
 }

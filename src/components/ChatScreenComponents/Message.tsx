@@ -61,7 +61,10 @@ const Message = ({ item, index }: MessageType) => {
           {isMyMessage() && (
             <Image
               source={require("../../../assets/icons/doubleTick.png")}
-              style={styles.icon}
+              style={[
+                styles.icon,
+                { tintColor: item.read === false ? "white" : "#3396FD" },
+              ]}
             />
           )}
         </View>
@@ -75,7 +78,13 @@ const Message = ({ item, index }: MessageType) => {
           {isMyMessage() && (
             <Image
               source={require("../../../assets/icons/doubleTick.png")}
-              style={styles.icon}
+              style={[
+                styles.icon,
+                {
+                  tintColor: item.read === false ? "grey" : "#3396FD",
+                  opacity: item.read === false ? 0.4 : 1,
+                },
+              ]}
             />
           )}
         </View>
@@ -141,6 +150,5 @@ const styles = StyleSheet.create({
     height: 16,
     width: 16,
     marginLeft: 3,
-    tintColor: "#3396FD",
   },
 });

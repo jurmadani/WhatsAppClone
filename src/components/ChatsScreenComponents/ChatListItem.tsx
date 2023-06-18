@@ -5,13 +5,13 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorTypes } from "../../types/navigation/StackNavigatorTypes";
 import { Divider } from "@ui-kitten/components";
 import { windowWidth } from "../../constants/Dimensions";
-import { useToast } from "react-native-toast-notifications";
 import { IContacts, userSliceType } from "../../types/redux/sliceTypes";
 import { useDispatch, useSelector } from "react-redux";
 import { firebase } from "../../../backend/firebase";
 import ImageCache from "../../controllers/ImageCache";
 import { IChatRoomsExtended } from "../../screens/ChatsScreen";
-import { toastNotificationSlice } from "../../redux/toastNotificationSlice";
+import { Badge } from "@rneui/base";
+
 type ChatListItem = {
   item: IChatRoomsExtended;
   searchInput: string;
@@ -100,12 +100,6 @@ const ChatListItem = ({ item, searchInput }: ChatListItem) => {
               <Text style={styles.username}>{otherUser?.fullName}</Text>
             )}
             <View style={styles.lastMessageView}>
-              {isMyMessage() && (
-                <Image
-                  source={require("../../../assets/icons/doubleTick.png")}
-                  style={styles.icon}
-                />
-              )}
               {/* Message */}
               {item?.lastMessage === "You send a photo" ? (
                 item?.lastMessageSenderUniqueId === user.uniqueId ? (
@@ -125,10 +119,29 @@ const ChatListItem = ({ item, searchInput }: ChatListItem) => {
               )}
             </View>
           </View>
-
           {/* Timestamp */}
-          <Text style={styles.timestamp}>{item.lastMessageTimestamp}</Text>
+          <Text
+            style={[
+              styles.timestamp,
+              {
+                opacity: item.unreadMessages > 0 ? 1 : 0.4,
+                color: item.unreadMessages > 0 ? "#3396FD" : "black",
+                fontWeight: item.unreadMessages > 0 ? "500" : "400",
+              },
+            ]}
+          >
+            {item.lastMessageTimestamp}
+          </Text>
+          {item.unreadMessages > 0 && (
+            <Badge
+              value={item.unreadMessages}
+              status="primary"
+              textStyle={{ textAlign: "center" }}
+              badgeStyle={styles.badgeStyle}
+            />
+          )}
         </View>
+
         <Divider style={styles.divider} />
       </TouchableOpacity>
     );
@@ -200,9 +213,28 @@ const ChatListItem = ({ item, searchInput }: ChatListItem) => {
               )}
             </View>
           </View>
-
           {/* Timestamp */}
-          <Text style={styles.timestamp}>{item.lastMessageTimestamp}</Text>
+
+          <Text
+            style={[
+              styles.timestamp,
+              {
+                opacity: item.unreadMessages > 0 ? 1 : 0.4,
+                color: item.unreadMessages > 0 ? "#3396FD" : "black",
+                fontWeight: item.unreadMessages > 0 ? "500" : "400",
+              },
+            ]}
+          >
+            {item.lastMessageTimestamp}
+          </Text>
+          {item.unreadMessages > 0 && (
+            <Badge
+              value={item.unreadMessages}
+              status="primary"
+              textStyle={{ textAlign: "center" }}
+              badgeStyle={styles.badgeStyle}
+            />
+          )}
         </View>
         <Divider style={styles.divider} />
       </TouchableOpacity>
@@ -215,7 +247,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 10,
   },
-
+  badgeStyle: {
+    height: 20,
+    width: 20,
+    overflow: "hidden",
+    borderRadius: 99,
+    marginLeft: 2,
+  },
   username: {
     fontWeight: "bold",
     fontSize: 16,
@@ -234,7 +272,6 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     right: 5,
-    opacity: 0.4,
     fontSize: 15,
     flex: 1,
     textAlign: "right",

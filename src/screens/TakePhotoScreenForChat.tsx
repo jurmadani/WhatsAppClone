@@ -126,6 +126,7 @@ const TakePhotoScreenForChat = ({ route }: any) => {
               chatRoomId: "",
               senderUniqueId: user.uniqueId,
               image: url,
+              read:false,
             },
           ],
           users: [user.uniqueId, receiverUniqueId],
@@ -146,6 +147,7 @@ const TakePhotoScreenForChat = ({ route }: any) => {
               chatRoomId: chatRoomId,
               senderUniqueId: user.uniqueId,
               image: url,
+              read:false,
             },
           ],
         });
@@ -222,6 +224,7 @@ const TakePhotoScreenForChat = ({ route }: any) => {
               text: "",
               senderUniqueId: user.uniqueId,
               image: url,
+              read:false,
             },
           ],
           lastMessage: "You send a photo",
