@@ -1,9 +1,16 @@
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity,Alert } from "react-native";
 import React from "react";
 
 const EditButton = () => {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity
+      onPress={() =>
+        Alert.alert(
+          "Feature unavailable",
+          "Feel free to implement this functionality"
+        )
+      }
+    >
       <Text style={styles.editButton}>Edit</Text>
     </TouchableOpacity>
   );

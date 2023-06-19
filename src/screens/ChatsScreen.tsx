@@ -149,7 +149,6 @@ const ChatsScreen = ({ navigation }: any) => {
                   });
                 }
               });
-              //   setMediaArray(mediaData);
               let formattedTime;
               if (timeDifference < 86400000) {
                 // Less than 24 hours
@@ -319,7 +318,7 @@ const ChatsScreen = ({ navigation }: any) => {
                     );
                     setTimeout(() => {
                       dispatch(toastNotificationSlice.actions.hideToast());
-                    }, 2500);
+                    }, 3500);
                     //
                   }
                 }

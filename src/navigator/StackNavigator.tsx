@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Button } from "react-native";
+import { View, Text, TouchableOpacity, Button, Alert } from "react-native";
 import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
@@ -172,7 +172,14 @@ const StackNavigator = () => {
             ),
             headerRight: () => (
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() =>
+                    Alert.alert(
+                      "Feature unavailable",
+                      "Feel free to implement this functionality"
+                    )
+                  }
+                >
                   <Ionicons
                     name="ios-videocam-outline"
                     size={30}
@@ -180,7 +187,14 @@ const StackNavigator = () => {
                     style={{ marginRight: 15 }}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() =>
+                    Alert.alert(
+                      "Feature unavailable",
+                      "Feel free to implement this functionality"
+                    )
+                  }
+                >
                   <Ionicons
                     name="ios-call-outline"
                     size={28}

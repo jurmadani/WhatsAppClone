@@ -1,11 +1,18 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from "react-native";
 import React from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const CameraIcon = () => {
   return (
     /* camera icon */
-    <TouchableOpacity>
+    <TouchableOpacity
+      onPress={() =>
+        Alert.alert(
+          "Feature unavailable",
+          "Feel free to implement this functionality"
+        )
+      }
+    >
       <Ionicons
         //@ts-ignore
         name={"camera-outline"}
